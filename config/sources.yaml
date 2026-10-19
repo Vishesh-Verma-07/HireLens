@@ -1,0 +1,46 @@
+# Which public sources to sweep, and how.
+# Every source here is public data. No login, no scraping behind auth.
+
+sources:
+  hn:
+    enabled: true
+    # HN "Ask HN: Who is hiring?" monthly threads, via the public Algolia API.
+    searchUrl: https://hn.algolia.com/api/v1/search_by_date
+
+  funding:
+    enabled: true
+    # RSS feeds for funding rounds / startup news.
+    feeds:
+      - https://techcrunch.com/tag/funding/feed/
+      - https://techcrunch.com/category/venture/feed/
+
+  producthunt:
+    enabled: true
+    feeds:
+      - https://www.producthunt.com/feed
+
+  # Fresh, dated remote-job postings. These are the main source of
+  # "posted in the last few days" matches.
+  remoteok:
+    enabled: true
+    limit: 100
+
+  remotive:
+    enabled: true
+    limit: 60
+
+  # Large public board (mostly EU). Filtered to remote or India-based tech roles.
+  arbeitnow:
+    enabled: true
+    limit: 60
+
+  yc:
+    enabled: true
+    url: https://www.ycombinator.com/companies
+    # How many companies to pull. The run reads YC's own public search config
+    # from the page, so no secret is hardcoded here.
+    limit: 120
+    # Only companies YC marks as actively hiring.
+    hiringOnly: true
+    # Optional keyword to narrow the directory, e.g. "payments".
+    # query: ""

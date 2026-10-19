@@ -1,0 +1,82 @@
+# Runs one bot pass every 30 minutes on GitHub's free runners.
+#
+# Why this shape:
+#   - The bot is a "poll the inbox, send the digest if due" job, so a scheduled
+#     run replaces an always-on server. No card, no server to maintain.
+#   - The runner's filesystem is wiped every run. That's fine: unseen mail is
+#     tracked by IMAP flags and the daily digest is de-duplicated by looking it
+#     up in the mailbox (see dailyDigestExists in src/channels/email/mailer.ts).
+#   - Private repos get 2,000 Action minutes/month. One pass per 30 min is
+#     ~1,400 min/month, comfortably inside the free allowance.
+#
+# Required repository secrets (Settings → Secrets and variables → Actions):
+#   SMTP_USER, SMTP_PASS, MAIL_FROM, MAIL_TO
+
+name: jobfinder bot
+
+on:
+  schedule:
+    # Every 30 minutes.
+    - cron: "*/30 * * * *"
+    # Monthly heartbeat: GitHub disables scheduled workflows after 60 days of
+    # repository inactivity, so we commit a timestamp once a month.
+    - cron: "0 3 1 * *"
+  workflow_dispatch: {}
+
+concurrency:
+  # Never let two passes overlap (e.g. a manual run during a scheduled one),
+  # which could otherwise double-reply.
+  group: jobfinder
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  pass:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Cache node_modules
+        id: nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: nm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.nm.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Bot pass
+        if: github.event.schedule != '0 3 1 * *'
+        env:
+          # Makes MAIL_DAILY_HOUR mean IST, not UTC.
+          TZ: Asia/Kolkata
+          MAIL_PROVIDER: gmail
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          MAIL_DAILY_HOUR: "8"
+          MAIL_POLL_MINUTES: "30"
+        run: npm run bot:once
+
+      - name: Keep the schedule alive
+        if: github.event.schedule == '0 3 1 * *'
+        run: |
+          git config user.name "jobfinder-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p data
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > data/.heartbeat
+          git add -f data/.heartbeat
+          git commit -m "chore: monthly heartbeat" || echo "nothing to commit"
+          git push

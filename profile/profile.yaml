@@ -1,0 +1,173 @@
+# ============================================================================
+# THE "FOR ME ONLY" CONFIG.
+#
+# This is user #1's profile. Everything the matcher does is scored against
+# this file.
+#
+# Scoring notes:
+#  - `skills`, `domains`, `roles` are matched as whole words, so "java" will
+#    NOT match "javascript" and "react" will NOT match "reactive".
+#  - Specific, multi-word terms ("payment infrastructure", "developer tools")
+#    score better than generic single words.
+# ============================================================================
+
+name: "Vishesh Verma"
+
+headline: "Full-stack Software Engineer | TypeScript, Node.js, React, PostgreSQL | Open Source"
+
+location: "Indore, India"
+
+summary: >
+  Software engineer with hands-on experience building backend systems,
+  full-stack applications, real-time products, and developer tools.
+  At Kody Technolab, worked on enterprise applications, PostgreSQL
+  optimization, an exam generation system with PDF export, and HRMS
+  approval workflows. Built ViCode, an open-source terminal-based AI
+  coding agent using Bun and TypeScript, along with Circle to Square,
+  a real-time multiplayer chess platform, BrainDock, a knowledge
+  management application, and Drawzy, a collaborative whiteboard
+  powered by Canvas API and WebSockets. Have also contributed to
+  open-source projects, including Better Auth. Interested in early-stage
+  startups where I can work across the stack, take ownership of
+  engineering problems, and build products that people actually use.
+
+# Matched as whole words against startup descriptions, hiring posts and
+# funding headlines. Precise terms beat vague ones.
+skills:
+  - typescript
+  - javascript
+  - node.js
+  - express.js
+  - react
+  - next.js
+  - postgresql
+  - mongodb
+  - mongoose
+  - redis
+  - REST APIs
+  - API design
+  - SQL optimization
+  - prisma
+  - websockets
+  - docker
+  - aws
+  - tailwind css
+  - redux toolkit
+  - vector databases
+  - pinecone
+  - rag
+  - jwt
+  - git
+  - github
+  - bun
+  - AI coding agents
+  - developer tools
+  - open source
+  - data structures and algorithms
+  - C++
+  - python
+  - java
+
+domains:
+  - developer tools
+  - developer infrastructure
+  - SaaS
+  - AI developer tools
+  - AI applications
+  - backend infrastructure
+  - productivity tools
+  - fintech
+  - real-time applications
+  - knowledge management
+
+seniority: "junior"
+yearsExperience: 1
+
+roles:
+  - software engineer
+  - backend engineer
+  - full stack engineer
+  - full-stack developer
+  - founding engineer
+  - software development engineer
+  - developer tools engineer
+  - platform engineer
+
+# Proof points. Not used for scoring; used by the outreach step (next milestone)
+# to write "why you fit" in your voice.
+highlights:
+  - "Built ViCode, an open-source terminal-based AI coding agent using Bun and TypeScript, featuring interactive command approval and developer-controlled execution."
+  - "Built Circle to Square, a real-time multiplayer chess platform with WebSocket synchronization, ELO ratings, spectator mode, and PGN support."
+  - "Developed BrainDock, a full-stack knowledge management application using React, Node.js, and Docker."
+  - "Built Drawzy, a collaborative whiteboard using the Canvas API and WebSockets."
+  - "Worked on enterprise applications at Kody Technolab, including backend development, PostgreSQL optimization, exam generation with PDF export, and HRMS approval workflows."
+  - "Improved PostgreSQL query performance by 30% during my internship at Kody Technolab."
+  - "Contribute to open-source projects, including Better Auth, by working on issues, submitting pull requests, and improving existing codebases."
+  - "Built a full-stack quiz platform at IQ Paths Technologies featuring authentication, leaderboards, progress tracking, and performance analytics."
+  - "Solved 1200+ coding problems and achieved LeetCode Knight rank, placing in the top 3.44% globally."
+
+education:
+  - school: "Medi-Caps University"
+    degree: "B.Tech, Computer Science Engineering"
+    start: "Aug 2022"
+    end: "Jun 2026"
+    location: "Indore, India"
+    score: "CGPA 9.1"
+
+preferences:
+  stages:
+    - pre-seed
+    - seed
+    - series-a
+    - series-b
+
+  remote: true
+
+  locations:
+    - India
+    - Remote
+    - Indore
+    - Bengaluru
+    - Pune
+    - Hyderabad
+    - Gurugram
+    - Noida
+    - Mumbai
+
+  excludeCompanies: []
+
+  excludeKeywords:
+    - gambling
+
+  # Only surface opportunities whose newest signal is at most this many days
+  # old. Undated listings are dropped, since freshness can't be verified.
+  maxAgeDays: 3
+
+# Identity + proof links. Not used for scoring; used by the outreach step.
+links:
+  portfolio: "https://visheshxdevs.in"
+  github: "https://github.com/Vishesh-Verma-07"
+  linkedin: "https://in.linkedin.com/in/visheshverma07"
+  leetcode: "https://leetcode.com/u/VisheshVerma/"
+  email: "visheshverma250703@gmail.com"
+  resume: "https://visheshxdevs.in/resume/Resume_Vishesh_Verma.pdf"
+
+  projects:
+    vicode:
+      live: "https://vicode.visheshxdevs.in/"
+      github: "https://github.com/Vishesh-Verma-07/ViCode"
+    multiplayer_chess:
+      live: "https://chess.visheshxdevs.in/"
+      github: "https://github.com/Vishesh-Verma-07/Multiplayer-Chess"
+    second_brain:
+      live: "https://secondbrain.visheshxdevs.in/"
+      github: "https://github.com/Vishesh-Verma-07/SecondBrain"
+    drawzy:
+      live: "https://visheshxdevs.in/projects"
+    mobile_magic:
+      live: "https://visheshxdevs.in/projects"
+
+  open_source:
+    better_auth_pr_9591: "https://github.com/better-auth/better-auth/pull/9591"
+    better_auth_pr_9544: "https://github.com/better-auth/better-auth/pull/9544"
+    vicode_pr_13: "https://github.com/Vishesh-Verma-07/ViCode/pull/13"

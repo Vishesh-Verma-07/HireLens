@@ -1,0 +1,9 @@
+node_modules/
+data/
+out/
+.env
+*.log
+
+# Personal data — keep your résumé and its extracted text out of git.
+profile/*.pdf
+profile/resume.txt

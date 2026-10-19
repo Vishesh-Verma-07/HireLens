@@ -1,0 +1,28 @@
+# Sample systemd unit for running jobfinder on a free always-on VM
+# (Oracle Cloud Always Free, GCP e2-micro, or any Linux box).
+#
+#   1. Install Node 22 and put the repo at /opt/jobfinder
+#      (git clone <repo> /opt/jobfinder && cd /opt/jobfinder && npm ci)
+#   2. Put your mail settings in /opt/jobfinder/.env  (chmod 600)
+#   3. sudo cp deploy/jobfinder.service /etc/systemd/system/
+#   4. sudo systemctl daemon-reload && sudo systemctl enable --now jobfinder
+#   5. journalctl -u jobfinder -f      # tail the logs
+#
+# Adjust User/WorkingDirectory and the node path to match the box.
+
+[Unit]
+Description=jobfinder email bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jobfinder
+WorkingDirectory=/opt/jobfinder
+EnvironmentFile=/opt/jobfinder/.env
+ExecStart=/usr/bin/npx tsx src/channels/email/bot.ts
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target

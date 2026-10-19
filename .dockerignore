@@ -1,0 +1,9 @@
+node_modules
+data
+out
+.env
+*.log
+.git
+.gitignore
+profile/*.pdf
+profile/resume.txt

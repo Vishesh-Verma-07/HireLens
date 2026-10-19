@@ -1,0 +1,32 @@
+{
+  "name": "jobfinder",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Single-user startup-job matcher: finds startups that fit one specific person, from public signals.",
+  "scripts": {
+    "match": "tsx src/index.ts",
+    "match:all": "tsx src/index.ts --all",
+    "match:llm": "tsx src/index.ts --llm",
+    "bot": "tsx src/channels/email/bot.ts",
+    "bot:once": "tsx src/channels/email/bot.ts --once",
+    "email:test": "tsx src/channels/email/bot.ts --test",
+    "email:send": "tsx src/channels/email/bot.ts --send-now",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "fast-xml-parser": "^4.5.0",
+    "imapflow": "^2.5.5",
+    "mailparser": "^3.9.46",
+    "nodemailer": "^10.1.7",
+    "yaml": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/mailparser": "^3.9.0",
+    "@types/node": "^22.9.0",
+    "@types/nodemailer": "^8.0.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  }
+}
