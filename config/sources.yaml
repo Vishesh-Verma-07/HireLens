@@ -34,6 +34,18 @@ sources:
     enabled: true
     limit: 60
 
+  # India-focused fresher/junior roles. The listing cards include skills and a
+  # relative posted date, so no detail-page fetch is needed.
+  internshala:
+    enabled: true
+    limit: 120
+
+  # India-focused job board with a structured public API (skills, work mode,
+  # created_at). Filtered to technical full-time roles.
+  unstop:
+    enabled: true
+    limit: 60
+
   yc:
     enabled: true
     url: https://www.ycombinator.com/companies

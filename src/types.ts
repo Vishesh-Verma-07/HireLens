@@ -15,7 +15,9 @@ export type SourceId =
   | "producthunt"
   | "remoteok"
   | "remotive"
-  | "arbeitnow";
+  | "arbeitnow"
+  | "internshala"
+  | "unstop";
 
 export type SignalType = "raised" | "launched" | "hiring" | "news";
 
@@ -59,6 +61,11 @@ export interface Preferences {
   needsSponsorship?: boolean;
   excludeCompanies: string[];
   excludeKeywords: string[];
+  /**
+   * Hard cap on a posting's stated years-of-experience requirement. Postings
+   * asking for more are dropped for early-career profiles.
+   */
+  maxRequiredYears?: number;
   /**
    * Only keep opportunities whose most recent signal is at most this many days
    * old. Undated opportunities are dropped when this is set, because their

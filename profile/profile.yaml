@@ -66,7 +66,11 @@ skills:
   - data structures and algorithms
   - C++
   - python
-  - java
+  - nodejs
+  - nextjs
+  - express
+  - REST API
+  - tailwind
 
 domains:
   - developer tools
@@ -92,6 +96,20 @@ roles:
   - software development engineer
   - developer tools engineer
   - platform engineer
+  - software developer
+  - full stack developer
+  - backend developer
+  - frontend developer
+  - frontend engineer
+  - react developer
+  - node.js developer
+  - python developer
+  - ai engineer
+  - machine learning engineer
+  - ai ml engineer
+  - ml engineer
+  - llm engineer
+  - sde
 
 # Proof points. Not used for scoring; used by the outreach step (next milestone)
 # to write "why you fit" in your voice.
@@ -138,6 +156,16 @@ preferences:
 
   excludeKeywords:
     - gambling
+    # Stacks you don't want to work in. Whole-word matching means "java" will
+    # NOT exclude "javascript".
+    - java
+    - ruby
+    - ruby on rails
+    - rails
+
+  # Drop postings that explicitly ask for more than this many years. You have
+  # ~1 year of internships, so 3+ year roles are filtered out.
+  maxRequiredYears: 2
 
   # Only surface opportunities whose newest signal is at most this many days
   # old. Undated listings are dropped, since freshness can't be verified.

@@ -6,9 +6,23 @@ function normName(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
+/** Job postings are distinct opportunities, even at the same company. */
+const JOB_SOURCES = new Set(["remoteok", "remotive", "arbeitnow", "internshala", "unstop", "hn"]);
+
+function dedupeKey(s: Startup): string {
+  const company = normName(s.name);
+  if (!company) return "";
+  if (JOB_SOURCES.has(s.source)) {
+    const role = normName(s.oneLiner ?? "");
+    return role ? `${company}|${role}` : company;
+  }
+  return company;
+}
+
 /**
- * Score every startup, merge duplicates across sources (same company seen in
- * HN *and* a funding feed becomes one row), then sort by fit.
+ * Score every startup, merge duplicate job postings (same company + role across
+ * boards), then sort by fit. Company-level signals (funding, launches) stay as
+ * their own rows so they never erase a distinct role.
  */
 export function rankStartups(
   startups: Startup[],
@@ -18,7 +32,7 @@ export function rankStartups(
   const byName = new Map<string, Startup>();
 
   for (const s of startups) {
-    const key = normName(s.name);
+    const key = dedupeKey(s);
     if (!key) continue;
     const existing = byName.get(key);
     if (!existing) {

@@ -44,15 +44,22 @@ Scope is **matching only** — no email sending to founders.
 
 - **Sources** (public, no auth): **YC** company directory, **HN** "Who is
   hiring?" thread, **funding** RSS feeds, **Product Hunt** launches, plus fresh
-  job boards — **RemoteOK**, **Remotive** and **Arbeitnow**.
+  job boards — **RemoteOK**, **Remotive**, **Arbeitnow**, and India-focused
+  **Internshala** + **Unstop**.
 - **Matching** — a transparent, deterministic score (0–100). Whole-word
   matching (so `java` ≠ `javascript`), plus domain fit, signal strength,
-  recency, stage, location/remote, and junior/senior awareness. Hard exclusions
-  drop a startup to 0; opportunities with no matching skill/domain/role are
-  dropped entirely.
+  recency, stage, location/remote, and junior/senior awareness. Early-career
+  profiles also drop senior/lead titles and postings that ask for more than
+  `preferences.maxRequiredYears` years. A listing must match a real core skill
+  (not just a role word or a lone `Git`/`Docker`), and hard exclusions
+  (`preferences.excludeKeywords`) drop a startup to 0 — this profile excludes
+  Java, Ruby and Rails.
 - **Freshness gate** — `preferences.maxAgeDays` keeps only opportunities whose
   newest signal is within that many days (undated listings are dropped, since
   their freshness can't be verified). Set to `3` to see only what's fresh.
+  With a strict gate plus a junior/India/remote filter, some days legitimately
+  have only a handful of matches; the digest shows those rather than padding
+  the list with senior or stale roles.
 - **Daily snapshot** — one run per day is cached in `data/snapshot-<date>.json`
   and reused, so the bot stays consistent and doesn't re-hit sources.
 - **Email bot** — see §4.
@@ -186,6 +193,14 @@ remote / location / visa preferences, exclusions, plus `education` and `links`.
 Terms are matched as whole words, so specific multi-word terms beat single
 generic words.
 
+Two fit controls are worth knowing:
+
+- `preferences.maxRequiredYears` — drop postings that explicitly ask for more
+  years than this (default `2`). Senior/lead titles are dropped for junior and
+  mid profiles regardless of the stated years.
+- `preferences.excludeKeywords` — whole-word stack exclusions. `java` excludes
+  Java roles but **not** JavaScript; `ruby` and `rails` cover Rails shops.
+
 Exclusions added via the `exclude` command are stored separately in
 `data/exclusions.json` so your hand-written YAML is never rewritten.
 
@@ -199,7 +214,7 @@ src/
   agent/agent.ts        # transport-agnostic command core + daily snapshot
   profile.ts            # profile.yaml → Profile
   types.ts              # Signal / Startup / Profile / Match
-  sources/              # yc, hn, funding, producthunt, remoteok, remotive, arbeitnow (+ rss helper)
+  sources/              # yc, hn, funding, producthunt, remoteok, remotive, arbeitnow, internshala, unstop
   match/score.ts        # deterministic, explainable fit score
   match/rank.ts         # dedupe across sources, then sort
   match/llm.ts          # optional LLM re-rank

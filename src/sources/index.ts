@@ -5,9 +5,11 @@ import type { Startup } from "../types.js";
 import { fetchFunding } from "./funding.js";
 import { fetchArbeitnow } from "./arbeitnow.js";
 import { fetchHn } from "./hn.js";
+import { fetchInternshala } from "./internshala.js";
 import { fetchProductHunt } from "./producthunt.js";
 import { fetchRemoteOk } from "./remoteok.js";
 import { fetchRemotive } from "./remotive.js";
+import { fetchUnstop } from "./unstop.js";
 import { fetchYc } from "./yc.js";
 
 interface SourceConfig {
@@ -19,6 +21,8 @@ interface SourceConfig {
     remoteok?: { enabled?: boolean; limit?: number };
     remotive?: { enabled?: boolean; limit?: number };
     arbeitnow?: { enabled?: boolean; limit?: number };
+    internshala?: { enabled?: boolean; limit?: number };
+    unstop?: { enabled?: boolean; limit?: number };
   };
 }
 
@@ -62,6 +66,12 @@ export async function collectStartups(
   }
   if (want("arbeitnow")) {
     track("arbeitnow", fetchArbeitnow(s.arbeitnow?.limit ?? 60));
+  }
+  if (want("internshala")) {
+    track("internshala", fetchInternshala(s.internshala?.limit ?? 60));
+  }
+  if (want("unstop")) {
+    track("unstop", fetchUnstop(s.unstop?.limit ?? 60));
   }
   if (want("yc")) {
     track(

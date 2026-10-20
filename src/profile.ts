@@ -91,6 +91,10 @@ export function loadProfile(path: string): Profile {
         : undefined,
     excludeCompanies: strList(prefsRaw.excludeCompanies).map((s) => s.toLowerCase()),
     excludeKeywords: strList(prefsRaw.excludeKeywords).map((s) => s.toLowerCase()),
+    maxRequiredYears:
+      typeof prefsRaw.maxRequiredYears === "number" && prefsRaw.maxRequiredYears >= 0
+        ? prefsRaw.maxRequiredYears
+        : undefined,
     maxAgeDays:
       typeof prefsRaw.maxAgeDays === "number" && prefsRaw.maxAgeDays > 0
         ? prefsRaw.maxAgeDays
