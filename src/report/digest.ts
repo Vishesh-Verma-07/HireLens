@@ -1,4 +1,5 @@
 import type { Match, Profile } from "../types.js";
+import { localDate } from "../lib/date.js";
 
 function fmtAmount(usd: number | undefined): string {
   if (!usd) return "";
@@ -50,7 +51,7 @@ function metaLine(m: Match): string {
 
 export function renderDigest(profile: Profile, matches: Match[], opts: { showAll: boolean }): string {
   const heading = `# Job matches for ${profile.name}`;
-  const sub = `_${profile.headline || "no headline set"} · ${matches.length} match${matches.length === 1 ? "" : "es"} · ${new Date().toISOString().slice(0, 10)}${opts.showAll ? " · all (incl. seen)" : " · new only"}_`;
+  const sub = `_${profile.headline || "no headline set"} · ${matches.length} match${matches.length === 1 ? "" : "es"} · ${localDate()}${opts.showAll ? " · all (incl. seen)" : " · new only"}_`;
 
   if (matches.length === 0) {
     return `${heading}\n\n${sub}\n\nNo new matches this run.\n`;

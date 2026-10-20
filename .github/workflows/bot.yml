@@ -9,6 +9,11 @@
 #   - Private repos get 2,000 Action minutes/month. One pass per 30 min is
 #     ~1,400 min/month, comfortably inside the free allowance.
 #
+# IMPORTANT: GitHub's scheduler is best-effort and *will* delay or skip ticks
+# under load. We therefore don't wait for a specific hour: MAIL_DAILY_HOUR=0
+# means the digest goes out on the first run after local midnight, and the
+# mailbox de-dup guard makes that safe no matter how many runs happen.
+#
 # Required repository secrets (Settings → Secrets and variables → Actions):
 #   SMTP_USER, SMTP_PASS, MAIL_FROM, MAIL_TO
 
@@ -65,7 +70,7 @@ jobs:
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           MAIL_FROM: ${{ secrets.MAIL_FROM }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
-          MAIL_DAILY_HOUR: "8"
+          MAIL_DAILY_HOUR: "0"
           MAIL_POLL_MINUTES: "30"
         run: npm run bot:once
 

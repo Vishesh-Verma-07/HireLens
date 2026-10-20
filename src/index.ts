@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { logger } from "./lib/log.js";
+import { localDate } from "./lib/date.js";
 import { llmAvailable, llmRefine } from "./match/llm.js";
 import { rankStartups } from "./match/rank.js";
 import { loadProfile } from "./profile.js";
@@ -64,7 +65,7 @@ async function main(): Promise<void> {
   if (args.write) {
     const outDir = resolve(root, "out");
     mkdirSync(outDir, { recursive: true });
-    const stamp = new Date().toISOString().slice(0, 10);
+    const stamp = localDate();
     const outPath = resolve(outDir, `digest-${stamp}.md`);
     writeFileSync(outPath, digest, "utf8");
     markSeen(store, top.map((m) => m.startup.id));

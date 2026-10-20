@@ -57,6 +57,9 @@ export async function sendMail(config: EmailConfig, mail: OutgoingMail): Promise
  * a container) the local filesystem is wiped between runs, so `lastSentDate`
  * can't be trusted. The sent digest itself is the durable record — we send it
  * to ourselves, so it lands in the inbox.
+ *
+ * INBOX is checked first (that's where a self-send lands); All Mail is a
+ * fallback in case a filter ever moves it.
  */
 export async function dailyDigestExists(config: EmailConfig, date: string): Promise<boolean> {
   const client = new ImapFlow({
@@ -68,12 +71,22 @@ export async function dailyDigestExists(config: EmailConfig, date: string): Prom
   });
 
   await client.connect();
-  const lock = await client.getMailboxLock("INBOX");
   try {
-    const found = await client.search({ subject: `matches for ${date}` }, { uid: true });
-    return (Array.isArray(found) ? found : []).length > 0;
+    for (const mailbox of ["INBOX", "[Gmail]/All Mail"]) {
+      try {
+        const lock = await client.getMailboxLock(mailbox);
+        try {
+          const found = await client.search({ subject: `matches for ${date}` }, { uid: true });
+          if ((Array.isArray(found) ? found : []).length > 0) return true;
+        } finally {
+          lock.release();
+        }
+      } catch {
+        // Mailbox not present on this provider (e.g. not Gmail) — try the next.
+      }
+    }
+    return false;
   } finally {
-    lock.release();
     await client.logout().catch(() => undefined);
   }
 }

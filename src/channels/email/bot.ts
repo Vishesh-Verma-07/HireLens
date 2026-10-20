@@ -8,6 +8,7 @@ import {
   shouldSendDaily,
 } from "../../agent/agent.js";
 import { logger } from "../../lib/log.js";
+import { localDate } from "../../lib/date.js";
 import { renderDigestHtml, renderDigestText } from "../../report/digest.js";
 import { loadEmailConfig, type EmailConfig } from "./config.js";
 import { dailyDigestExists, fetchNewMail, sendMail } from "./mailer.js";
@@ -32,7 +33,7 @@ async function sendDailyDigest(config: EmailConfig): Promise<void> {
   const profile = loadProfileWithExclusions(ROOT);
 
   await sendMail(config, {
-    subject: `[jobfinder] ${page.length} match${page.length === 1 ? "" : "es"} for ${new Date().toISOString().slice(0, 10)}`,
+    subject: `[jobfinder] ${page.length} match${page.length === 1 ? "" : "es"} for ${localDate()}`,
     text: renderDigestText(profile, page),
     html: renderDigestHtml(profile, page),
   });
@@ -63,7 +64,7 @@ async function tick(config: EmailConfig): Promise<void> {
   }
   try {
     if (shouldSendDaily(ROOT, config.dailyHour)) {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = localDate();
       // On a host with an ephemeral filesystem the local "already sent" marker
       // is unreliable, so double-check the mailbox before sending.
       if (await dailyDigestExists(config, today)) {

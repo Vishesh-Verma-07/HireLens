@@ -147,7 +147,13 @@ because the **mailbox** is the source of truth:
 Setup: push the repo, then add four secrets under *Settings → Secrets and
 variables → Actions* — `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO` — and
 run *Actions → jobfinder bot → Run workflow* once to confirm.
-`MAIL_DAILY_HOUR` is read in IST (`TZ: Asia/Kolkata` in the workflow).
+
+**Caveat: GitHub's cron is best-effort.** Ticks are delayed and sometimes
+skipped under load (we saw a multi-hour gap on the first day). So the workflow
+sets `MAIL_DAILY_HOUR=0`: the digest goes out on the *first run after local
+midnight*, rather than at a fixed 8 AM that may never fire. The mailbox de-dup
+guard makes repeated runs safe. If you need guaranteed timing or fast replies,
+use Option B (a real VM) instead.
 
 ### Option B — a free always-on VM ($0, instant replies)
 

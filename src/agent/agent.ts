@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { logger } from "../lib/log.js";
+import { localDate } from "../lib/date.js";
 import { rankStartups } from "../match/rank.js";
 import { loadProfile } from "../profile.js";
 import {
@@ -55,7 +56,7 @@ function writeJson(path: string, value: unknown): void {
 }
 
 function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return localDate();
 }
 
 // --- profile + exclusions --------------------------------------------------
