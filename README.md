@@ -62,6 +62,11 @@ Scope is **matching only** — no email sending to founders.
   the list with senior or stale roles.
 - **Daily snapshot** — one run per day is cached in `data/snapshot-<date>.json`
   and reused, so the bot stays consistent and doesn't re-hit sources.
+- **No repeats** — the daily email only includes jobs that were *not* already
+  emailed in the last ~10 days (reconstructed from the digest emails in the
+  mailbox, so it survives GitHub Actions' ephemeral filesystem), and no single
+  company may take more than 2 slots. If nothing new qualifies, the email says
+  so instead of resurfacing yesterday's list.
 - **Email bot** — see §4.
 
 ---

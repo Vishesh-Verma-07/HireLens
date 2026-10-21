@@ -1,6 +1,7 @@
 import { ImapFlow } from "imapflow";
 import { simpleParser } from "mailparser";
 import nodemailer, { type Transporter } from "nodemailer";
+import { localDate } from "../../lib/date.js";
 import { logger } from "../../lib/log.js";
 import type { EmailConfig } from "./config.js";
 
@@ -86,6 +87,70 @@ export async function dailyDigestExists(config: EmailConfig, date: string): Prom
       }
     }
     return false;
+  } finally {
+    await client.logout().catch(() => undefined);
+  }
+}
+
+/**
+ * URLs of the jobs that were already emailed in a digest *before* `beforeDate`.
+ *
+ * Why the mailbox again: GitHub Actions wipes the filesystem between runs, so
+ * a local seen-list can't survive. The digests are durable (we mail them to
+ * ourselves), so the last few days of subjects plus their plain-text bodies are
+ * enough to reconstruct what has already been shown without persisting state.
+ */
+export async function previouslySentUrls(
+  config: EmailConfig,
+  beforeDate: string,
+  lookbackDays = 10,
+): Promise<Set<string>> {
+  const urls = new Set<string>();
+  const client = new ImapFlow({
+    host: config.imap.host,
+    port: config.imap.port,
+    secure: config.imap.secure,
+    auth: { user: config.imap.user, pass: config.imap.pass },
+    logger: false,
+  });
+
+  await client.connect();
+  try {
+    const since = new Date(Date.now() - lookbackDays * 86_400_000);
+    let searched = false;
+    for (const mailbox of ["INBOX", "[Gmail]/All Mail"]) {
+      try {
+        const lock = await client.getMailboxLock(mailbox);
+        try {
+          const found = await client.search({ since, subject: "matches for" }, { uid: true });
+          searched = true;
+          const uids = (Array.isArray(found) ? found : []).slice(-60);
+          if (uids.length === 0) continue;
+
+          // Collect everything before parsing: issuing another command while a
+          // fetch stream is open deadlocks ImapFlow (see fetchNewMail).
+          const messages = await client.fetchAll(uids, { uid: true, source: true }, { uid: true });
+          for (const message of messages) {
+            if (!message.source) continue;
+            const parsed = await simpleParser(message.source);
+            // Only past digests: today's own digest must not hide its jobs
+            // from the "matches" command or from a re-run.
+            if (!parsed.date || localDate(parsed.date) >= beforeDate) continue;
+
+            for (const line of (parsed.text ?? "").split(/\r?\n/)) {
+              const trimmed = line.trim();
+              if (/^https?:\/\//i.test(trimmed)) urls.add(trimmed);
+            }
+          }
+        } finally {
+          lock.release();
+        }
+      } catch {
+        // Mailbox not present on this provider — try the next one.
+      }
+    }
+    if (!searched) logger.warn("could not search past digests — dedupe disabled for this run");
+    return urls;
   } finally {
     await client.logout().catch(() => undefined);
   }

@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { logger } from "../lib/log.js";
 import { localDate } from "../lib/date.js";
 import { rankStartups } from "../match/rank.js";
+import { selectForDigest } from "../match/select.js";
 import { loadProfile } from "../profile.js";
 import {
   renderDigestHtml,
@@ -11,7 +12,6 @@ import {
   renderMatchDetailText,
 } from "../report/digest.js";
 import { collectStartups, loadSourceConfig } from "../sources/index.js";
-import { loadStore, markSeen, saveStore } from "../store/db.js";
 import type { Match, Profile } from "../types.js";
 
 // The agent core is transport-agnostic: it knows nothing about email or
@@ -19,6 +19,23 @@ import type { Match, Profile } from "../types.js";
 
 const PAGE_SIZE = 10;
 const SNAPSHOT_LIMIT = 60;
+/** No employer may take more than this many slots in one digest. */
+const PER_COMPANY = 2;
+
+/**
+ * The full digest list for today: newest, highest-fit rows first, minus jobs
+ * already emailed in an earlier digest and minus a company's 3rd+ row.
+ *
+ * Both the daily email and the "matches"/"more" replies go through here, so
+ * what you read in the email is exactly what the bot pages through.
+ */
+function digestList(matches: Match[], excludeUrls?: Set<string>): Match[] {
+  return selectForDigest(matches, {
+    excludeUrls,
+    limit: Number.POSITIVE_INFINITY,
+    perCompany: PER_COMPANY,
+  });
+}
 
 export interface Snapshot {
   generatedAt: string;
@@ -146,17 +163,24 @@ function reply(subject: string, text: string, html: string): Reply {
   return { subject, text, html };
 }
 
+export interface CommandOptions {
+  /** Job URLs already emailed in an earlier digest, so replies stay consistent. */
+  excludeUrls?: Set<string>;
+}
+
 export async function handleCommand(
   root: string,
   raw: string,
+  opts: CommandOptions = {},
 ): Promise<Reply> {
   const text = raw.trim().toLowerCase();
   const state = readState(root);
 
   const showPage = async (force: boolean, subject: string): Promise<Reply> => {
     const snapshot = await getSnapshot(root, force);
+    const list = digestList(snapshot.matches, opts.excludeUrls);
     const offset = state.offset ?? 0;
-    const page = snapshot.matches.slice(offset, offset + PAGE_SIZE);
+    const page = list.slice(offset, offset + PAGE_SIZE);
     if (page.length === 0) {
       return reply(
         subject,
@@ -164,11 +188,11 @@ export async function handleCommand(
         `<p style="font-family:sans-serif">No more matches. Reply <strong>refresh</strong> to run a fresh search.</p>`,
       );
     }
-    const opts = { startIndex: offset };
+    const renderOpts = { startIndex: offset };
     return reply(
       subject,
-      renderDigestText(loadProfileWithExclusions(root), page, opts),
-      renderDigestHtml(loadProfileWithExclusions(root), page, opts),
+      renderDigestText(loadProfileWithExclusions(root), page, renderOpts),
+      renderDigestHtml(loadProfileWithExclusions(root), page, renderOpts),
     );
   };
 
@@ -193,7 +217,8 @@ export async function handleCommand(
 
   if (text === "more" || text === "next") {
     const latest = await getSnapshot(root, false);
-    state.offset = Math.min((state.offset ?? 0) + PAGE_SIZE, Math.max(0, latest.matches.length - 1));
+    const list = digestList(latest.matches, opts.excludeUrls);
+    state.offset = Math.min((state.offset ?? 0) + PAGE_SIZE, Math.max(0, list.length - 1));
     state.snapshotDate = today();
     writeState(root, state);
     return showPage(false, `[jobfinder] more`);
@@ -206,7 +231,7 @@ export async function handleCommand(
   if (/^\d+$/.test(text)) {
     const n = Number.parseInt(text, 10);
     const snapshot = await getSnapshot(root, false);
-    const match = snapshot.matches[n - 1];
+    const match = digestList(snapshot.matches, opts.excludeUrls)[n - 1];
     if (!match) {
       return reply(
         `[jobfinder] no match #${n}`,
