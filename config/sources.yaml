@@ -78,6 +78,15 @@ sources:
     #   - software engineer
     # location: "Remote"
     posted: d1
+    # Google country code: us, in, gb, ...
+    country: us
+    # If Google drops the site: filter, retry these many boards one by one.
+    siteQueries: 4
+    # Also search Google Jobs for roles outside the ATS boards.
+    jobs: true
+    jobsLimit: 10
+    # jobsLocation: India
+    # jobsQuery: junior software engineer remote
     # level: entry
     # setup: remote
     boards: core

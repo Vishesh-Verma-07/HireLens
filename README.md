@@ -48,9 +48,11 @@ Scope is **matching only** — no email sending to founders.
   **Internshala** + **Unstop**.
 - **Board Scan (Google)** — compiles the profile into Google queries that
   target ATS domains directly, for boards that don't expose a feed. It searches
-  each query through SerpAPI or Google Custom Search, turns every ATS result
+  each query through SerpAPI or Google Custom Search, turns every usable result
   into a normal startup/job record, and feeds those records through the same
-  ranking and digest/email pipeline (see §3).
+  ranking and digest/email pipeline (see §3). When Google drops the `site:`
+  filter, it retries with site-only discovery; it also adds Google Jobs results
+  so roles outside the ATS boards can still reach the digest.
 - **Matching** — a transparent, deterministic score (0–100). Whole-word
   matching (so `java` ≠ `javascript`), plus domain fit, signal strength,
   recency, stage, location/remote, and junior/senior awareness. Early-career
@@ -94,10 +96,11 @@ the rest by compiling the profile into Google queries that target
 applicant-tracking systems directly, e.g.:
 
 ```text
-("software engineer" OR "backend engineer") Remote
+("software engineer" OR "backend engineer")
+(site:job-boards.greenhouse.io OR site:jobs.lever.co OR ...)
+Remote
 (-senior -staff -principal -director -manager)
 (remote OR "work from home")
-(site:job-boards.greenhouse.io OR site:jobs.lever.co OR ...)
 ```
 
 It is a local implementation of the query-builder pattern observed on
@@ -106,14 +109,20 @@ served JavaScript. It is **Google-only**: the query is filtered with Google's
 `tbs=qdr:*` time parameter.
 
 `npm run scan` is the preview: it prints the exact queries and live Google URLs
-without making a request. The `google` source then runs those same queries,
-keeps the links that point at the selected ATS boards, and turns each usable
-result into a normal `Startup` with the company, role, location, URL, and a
-hiring signal.
+without making a request. The `google` source runs each query, keeps the links
+that point at the selected ATS boards, and turns each usable result into a
+normal `Startup` with the company, role, location, URL, and a hiring signal.
 When `enrich` is on (the default), it also fetches the public ATS page so the
-scorer sees the full description instead of only the search snippet. Those
-records go through `rankStartups` like every other source, so the ones that fit
-your profile appear in `npm run match` and in the daily email.
+scorer sees the full description instead of only the search snippet.
+
+Google does not always honour `site:` when it is combined with title, location,
+and level terms. In that case the source retries with a site-only query for up
+to `google.siteQueries` boards (default 4), interleaves those results so one
+high-volume ATS cannot consume the whole limit, and lets the local matcher apply
+the profile. It also queries Google Jobs for the profile's first role + `remote`
+in the profile's first non-remote location; set `google.jobs: false` to disable
+that. Both result sets go through `rankStartups` like every other source, so the
+ones that fit your profile appear in `npm run match` and in the daily email.
 
 It does **not** scrape Google's HTML. Google blocks automated result pages, so
 the source uses a results API instead. Configure one provider in `.env`:
@@ -141,8 +150,10 @@ preview also writes a Markdown plan to `out/scan-<date>.md`.
 Google stops reading a query after roughly 32 terms, so long board lists are
 split into runs and only the first four runs are kept (the drop is reported).
 The source keeps at most `google.limit` ATS results across runs (default 20) and
-fetches `google.pages` result pages per run (default 2). All of those knobs live
-in `config/sources.yaml`.
+fetches `google.pages` result pages per run (default 2). It sends Google a
+country code (`google.country`, default `us`) because site-filtered queries can
+return nothing when the country is left to the API default. All of those knobs
+live in `config/sources.yaml`.
 
 Two freshness notes: Google's time filter applies to when Google indexed the
 page, not a guaranteed posting date; and for `posted: all` a result without a

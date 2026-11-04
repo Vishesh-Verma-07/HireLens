@@ -38,6 +38,20 @@ export interface GoogleSourceConfig {
   enrich?: boolean;
   /** How many ATS pages to fetch at most. */
   enrichLimit?: number;
+  /** Google country code (gl), e.g. "us" or "in". */
+  country?: string;
+  /** Boards to query individually when the combined query drops the site filter. */
+  siteQueries?: number;
+  /** Also search Google Jobs, which surfaces roles outside the ATS boards. */
+  jobs?: boolean;
+  /** Google Jobs query; defaults to the profile's first role + remote. */
+  jobsQuery?: string;
+  /** Google Jobs location; defaults to the profile's first non-remote location. */
+  jobsLocation?: string;
+  /** Google Jobs country code; defaults from jobsLocation. */
+  jobsCountry?: string;
+  /** Maximum Google Jobs results kept. */
+  jobsLimit?: number;
   roles?: string[];
   location?: string;
   posted?: TimeId;
@@ -74,6 +88,27 @@ interface CseResponse {
     pagemap?: { metatags?: Array<Record<string, string>> };
   }>;
   error?: { message?: string };
+}
+
+interface GoogleJobsResponse {
+  jobs_results?: Array<{
+    title?: string;
+    job_title?: string;
+    company_name?: string;
+    location?: string;
+    description?: string;
+    source_link?: string;
+    share_link?: string;
+    via?: string;
+    extensions?: string[];
+    detected_extensions?: {
+      posted_at?: string;
+      schedule_type?: string;
+      work_from_home?: boolean;
+    };
+    apply_options?: Array<{ title?: string; link?: string }>;
+  }>;
+  error?: string;
 }
 
 const GENERIC_LABELS = new Set([
@@ -162,6 +197,7 @@ async function searchSerpApi(
   time: TimeId,
   pages: number,
   max: number,
+  country: string,
 ): Promise<SearchResult[]> {
   const out: SearchResult[] = [];
 
@@ -173,14 +209,28 @@ async function searchSerpApi(
       num: "10",
       start: String(page * 10),
       hl: "en",
+      gl: country,
     });
     const filter = tbs(time);
     if (filter) params.set("tbs", filter);
 
-    const data = await fetchJsonSecret<SerpApiResponse>(
-      `https://serpapi.com/search.json?${params.toString()}`,
-    );
-    if (data.error) throw new Error(`SerpAPI: ${data.error}`);
+    let data: SerpApiResponse;
+    try {
+      data = await fetchJsonSecret<SerpApiResponse>(
+        `https://serpapi.com/search.json?${params.toString()}`,
+      );
+    } catch (err) {
+      if (page === 0) throw err;
+      logger.warn(
+        `google: SerpAPI page ${page + 1} failed — ${(err as Error).message}`,
+      );
+      break;
+    }
+    if (data.error) {
+      if (page === 0) throw new Error(`SerpAPI: ${data.error}`);
+      logger.warn(`google: SerpAPI page ${page + 1} failed — ${data.error}`);
+      break;
+    }
 
     const results = data.organic_results ?? [];
     for (const result of results) {
@@ -217,6 +267,7 @@ async function searchCse(
   time: TimeId,
   pages: number,
   max: number,
+  country: string,
 ): Promise<SearchResult[]> {
   const out: SearchResult[] = [];
 
@@ -228,15 +279,31 @@ async function searchCse(
       num: "10",
       start: String(page * 10 + 1),
       hl: "en",
+      gl: country,
     });
     const filter = dateRestrict(time);
     if (filter) params.set("dateRestrict", filter);
 
-    const data = await fetchJsonSecret<CseResponse>(
-      `https://www.googleapis.com/customsearch/v1?${params.toString()}`,
-    );
+    let data: CseResponse;
+    try {
+      data = await fetchJsonSecret<CseResponse>(
+        `https://www.googleapis.com/customsearch/v1?${params.toString()}`,
+      );
+    } catch (err) {
+      if (page === 0) throw err;
+      logger.warn(
+        `google: Custom Search page ${page + 1} failed — ${(err as Error).message}`,
+      );
+      break;
+    }
     if (data.error) {
-      throw new Error(`Google CSE: ${data.error.message ?? "request failed"}`);
+      if (page === 0) {
+        throw new Error(`Google CSE: ${data.error.message ?? "request failed"}`);
+      }
+      logger.warn(
+        `google: Custom Search page ${page + 1} failed — ${data.error.message ?? "request failed"}`,
+      );
+      break;
     }
 
     const items = data.items ?? [];
@@ -265,13 +332,14 @@ async function searchGoogle(
   time: TimeId,
   pages: number,
   max: number,
+  country: string,
 ): Promise<SearchResult[]> {
   const errors: string[] = [];
 
   const serpKey = env("SERPAPI_KEY");
   if (serpKey) {
     try {
-      return await searchSerpApi(serpKey, query, time, pages, max);
+      return await searchSerpApi(serpKey, query, time, pages, max, country);
     } catch (err) {
       errors.push((err as Error).message);
       logger.warn(`google: SerpAPI failed — ${(err as Error).message}`);
@@ -282,7 +350,7 @@ async function searchGoogle(
   const cseId = env("GOOGLE_CSE_ID");
   if (cseKey && cseId) {
     try {
-      return await searchCse(cseKey, cseId, query, time, pages, max);
+      return await searchCse(cseKey, cseId, query, time, pages, max, country);
     } catch (err) {
       errors.push((err as Error).message);
       logger.warn(`google: Custom Search failed — ${(err as Error).message}`);
@@ -597,6 +665,119 @@ async function enrich(startup: Startup): Promise<Startup> {
 }
 
 /**
+ * Google Jobs is a second Google surface: it finds current roles directly,
+ * including companies that do not publish on the ATS boards in the catalogue.
+ */
+async function fetchGoogleJobs(
+  profile: Profile,
+  config: GoogleSourceConfig,
+): Promise<Startup[]> {
+  if (config.jobs === false) return [];
+
+  const key = env("SERPAPI_KEY");
+  if (!key) return [];
+
+  const role = profile.roles[0] ?? "software engineer";
+  const seniority = profile.seniority.toLowerCase();
+  const prefix = /junior|entry|fresher/.test(seniority) ? "junior " : "";
+  const query = config.jobsQuery?.trim() || `${prefix}${role} remote`;
+  const location =
+    config.jobsLocation?.trim() ||
+    profile.preferences.locations.find((l) => !/^remote$/i.test(l) && l.trim())?.trim() ||
+    "India";
+  const lowerLocation = location.toLowerCase();
+  const country =
+    config.jobsCountry?.trim().toLowerCase() ||
+    (lowerLocation.includes("india")
+      ? "in"
+      : /united states|usa|\bus\b/.test(lowerLocation)
+        ? "us"
+        : config.country?.trim().toLowerCase() || "us");
+  const limit = Math.max(1, Math.min(config.jobsLimit ?? 10, 20));
+
+  const params = new URLSearchParams({
+    engine: "google_jobs",
+    q: query,
+    location,
+    gl: country,
+    hl: "en",
+    api_key: key,
+  });
+
+  let data: GoogleJobsResponse;
+  try {
+    data = await fetchJsonSecret<GoogleJobsResponse>(
+      `https://serpapi.com/search.json?${params.toString()}`,
+    );
+  } catch (err) {
+    logger.warn(`google: Google Jobs failed — ${(err as Error).message}`);
+    return [];
+  }
+  if (data.error) {
+    logger.warn(`google: Google Jobs failed — ${data.error}`);
+    return [];
+  }
+
+  const now = new Date().toISOString();
+  const startups: Startup[] = [];
+  for (const job of data.jobs_results ?? []) {
+    const title = normalizeWhitespace(job.title ?? job.job_title ?? "");
+    const company = normalizeWhitespace(job.company_name ?? "");
+    const link =
+      job.source_link ??
+      job.apply_options?.find((option) => option.link)?.link ??
+      job.share_link;
+    if (!title || !company || !link) continue;
+
+    const jobLocation = normalizeWhitespace(job.location ?? "");
+    const extensions = (job.extensions ?? []).join(" ");
+    const remote =
+      Boolean(job.detected_extensions?.work_from_home) ||
+      /\b(remote|anywhere|work from home|work-from-home)\b/i.test(
+        `${jobLocation} ${extensions} ${title}`,
+      );
+
+    const locations: string[] = [];
+    if (remote) locations.push("Remote");
+    if (jobLocation && !/^(anywhere|remote)$/i.test(jobLocation)) {
+      locations.push(jobLocation);
+    }
+
+    const date =
+      parseDate(job.detected_extensions?.posted_at, Date.parse(now)) ?? now;
+    const id = `google:job:${slug(`${company}-${title}-${link}`)}`;
+
+    startups.push({
+      id,
+      name: company,
+      oneLiner: title,
+      description: job.description
+        ? normalizeWhitespace(job.description).slice(0, 12_000)
+        : undefined,
+      url: link,
+      locations,
+      remote: remote || undefined,
+      industry: [],
+      source: "google",
+      signals: [
+        {
+          type: "hiring",
+          date,
+          text: `${company} — ${title}${locations.length ? ` (${locations.join(", ")})` : ""} · Google Jobs`,
+          url: link,
+        },
+      ],
+    });
+  }
+
+  const kept = startups.slice(0, limit);
+  logger.info(
+    `google: ${kept.length} Google Jobs startup(s) for "${query}" in ${location}`,
+  );
+  return kept;
+}
+
+/**
  * Compiles the profile into Google queries, searches each run, keeps results
  * that point at the selected boards, and returns them as Startups.
  */
@@ -639,15 +820,72 @@ export async function fetchGoogleScan(
   );
   const now = Date.now();
   const results: SearchResult[] = [];
+  const country =
+    typeof config.country === "string" && config.country.trim()
+      ? config.country.trim().toLowerCase()
+      : "us";
 
   for (const run of scan.plan.runs) {
+    let found: SearchResult[] = [];
     try {
-      const found = await searchGoogle(run.query, scan.time, pages, pages * 10);
+      found = await searchGoogle(run.query, scan.time, pages, pages * 10, country);
       logger.info(`google: ${run.label} returned ${found.length} result(s)`);
-      results.push(...found);
     } catch (err) {
       logger.warn(`google: ${run.label} failed — ${(err as Error).message}`);
     }
+
+    const hasBoard = found.some((result) => {
+      const url = parseUrl(result.link);
+      return url !== undefined && boardFor(url, scan.boards) !== undefined;
+    });
+
+    if (!hasBoard) {
+      // Google regularly drops `site:` when it is ANDed with titles, location,
+      // and level terms. A site-only query is reliable, so use it as a
+      // discovery pass and let the local matcher apply the profile.
+      const wanted = Math.max(
+        1,
+        Math.min(config.siteQueries ?? 4, run.domains.length),
+      );
+      const perBoard: SearchResult[][] = [];
+
+      for (const domain of run.domains.slice(0, wanted)) {
+        const host = domain.replace(/^\*\./, "").toLowerCase();
+        try {
+          const siteResults = await searchGoogle(
+            `site:${host}`,
+            scan.time,
+            1,
+            10,
+            country,
+          );
+          logger.info(
+            `google: ${run.label} site:${host} fallback returned ${siteResults.length} result(s)`,
+          );
+          perBoard.push(siteResults);
+        } catch (err) {
+          logger.warn(
+            `google: ${run.label} site:${host} fallback failed — ${(err as Error).message}`,
+          );
+        }
+      }
+
+      if (perBoard.length > 0) {
+        // Round-robin so the global limit is shared across boards instead of
+        // being consumed by the first high-volume ATS.
+        const longest = Math.max(...perBoard.map((rows) => rows.length));
+        const fallback: SearchResult[] = [];
+        for (let i = 0; i < longest; i++) {
+          for (const rows of perBoard) {
+            const result = rows[i];
+            if (result) fallback.push(result);
+          }
+        }
+        found = fallback;
+      }
+    }
+
+    results.push(...found);
   }
 
   const unique = dedupe(results);
@@ -675,5 +913,10 @@ export async function fetchGoogleScan(
   logger.info(
     `google: ${startups.length} ATS startup(s) from ${unique.length} result(s)`,
   );
-  return startups;
+
+  const jobs = await fetchGoogleJobs(profile, config);
+  if (jobs.length > 0) {
+    logger.info(`google: added ${jobs.length} Google Jobs startup(s)`);
+  }
+  return [...startups, ...jobs];
 }

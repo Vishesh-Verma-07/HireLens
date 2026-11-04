@@ -189,6 +189,8 @@ export interface ScanInput {
 export interface ScanRun {
   label: string;
   query: string;
+  /** Board domains in this run, used for site-only discovery fallbacks. */
+  domains: string[];
   url: string;
 }
 
@@ -300,23 +302,26 @@ function chunkSites(sites: string[], preTerms: number): string[][] {
 
 /** Compiles preferences into one or more Google queries and search URLs. */
 export function compileScan(input: ScanInput): ScanPlan {
-  const parts: string[] = [];
-
   const titles = titlePhrases(input.titles, input.variants).map(phrase);
-  if (titles.length > 0) parts.push(orClause(titles));
+  const titleClause = titles.length > 0 ? orClause(titles) : "";
+
+  // Google's parser is much more reliable when the site: group sits directly
+  // after the title clause. Appending it after the location/level/setup terms
+  // sometimes makes Google drop the site restriction and return aggregators.
+  const tail: string[] = [];
 
   const location = input.location?.trim();
-  if (location) parts.push(phrase(location));
+  if (location) tail.push(phrase(location));
 
   for (const spec of [LEVEL_TERMS[input.level], SETUP_TERMS[input.setup]]) {
     if (!spec) continue;
-    if (spec.pos && spec.pos.length > 0) parts.push(orClause(spec.pos));
+    if (spec.pos && spec.pos.length > 0) tail.push(orClause(spec.pos));
     if (spec.neg && spec.neg.length > 0) {
-      parts.push(spec.neg.map((t) => `-${t}`).join(" "));
+      tail.push(spec.neg.map((t) => `-${t}`).join(" "));
     }
   }
 
-  const prefix = parts.join(" ");
+  const prefix = [titleClause, ...tail].filter(Boolean).join(" ");
   const preTerms = countTerms(prefix);
   const sites = input.boards.map((b) => b.domain);
   const chunks = sites.length > 0 ? chunkSites(sites, preTerms) : [];
@@ -336,10 +341,13 @@ export function compileScan(input: ScanInput): ScanPlan {
 
   const runs: ScanRun[] = ready
     ? chunks.map((chunk, i) => {
-        const query = [prefix, siteClause(chunk)].filter(Boolean).join(" ");
+        const query = [titleClause, siteClause(chunk), ...tail]
+          .filter(Boolean)
+          .join(" ");
         return {
           label: `Run ${i + 1} of ${chunks.length}`,
           query,
+          domains: chunk,
           url: buildUrl(query, input.time),
         };
       })
