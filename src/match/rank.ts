@@ -7,7 +7,15 @@ function normName(name: string): string {
 }
 
 /** Job postings are distinct opportunities, even at the same company. */
-const JOB_SOURCES = new Set(["remoteok", "remotive", "arbeitnow", "internshala", "unstop", "hn"]);
+const JOB_SOURCES = new Set([
+  "remoteok",
+  "remotive",
+  "arbeitnow",
+  "internshala",
+  "unstop",
+  "hn",
+  "google",
+]);
 
 function dedupeKey(s: Startup): string {
   const company = normName(s.name);

@@ -17,7 +17,8 @@ export type SourceId =
   | "remotive"
   | "arbeitnow"
   | "internshala"
-  | "unstop";
+  | "unstop"
+  | "google";
 
 export type SignalType = "raised" | "launched" | "hiring" | "news";
 

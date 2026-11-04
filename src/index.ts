@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { logger } from "./lib/log.js";
 import { localDate } from "./lib/date.js";
+import { loadEnv } from "./lib/env.js";
 import { llmAvailable, llmRefine } from "./match/llm.js";
 import { rankStartups } from "./match/rank.js";
 import { loadProfile } from "./profile.js";
@@ -32,6 +33,7 @@ function parseArgs(argv: string[]): Args {
 
 async function main(): Promise<void> {
   const root = resolve(import.meta.dirname, "..");
+  loadEnv(root);
   const args = parseArgs(process.argv.slice(2));
 
   const profile = loadProfile(resolve(root, "profile", "profile.yaml"));
@@ -40,7 +42,10 @@ async function main(): Promise<void> {
 
   logger.info(`Profile: ${profile.name} (${profile.skills.length} skills, ${profile.domains.length} domains)`);
 
-  const startups = await collectStartups(sourceConfig, { only: args.sources });
+  const startups = await collectStartups(sourceConfig, {
+    only: args.sources,
+    profile,
+  });
   logger.info(`Collected ${startups.length} raw startup records`);
 
   const ranked = rankStartups(startups, profile);

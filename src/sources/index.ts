@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
 import { logger } from "../lib/log.js";
-import type { Startup } from "../types.js";
+import type { Profile, Startup } from "../types.js";
 import { fetchFunding } from "./funding.js";
 import { fetchArbeitnow } from "./arbeitnow.js";
+import { fetchGoogleScan, type GoogleSourceConfig } from "./google.js";
 import { fetchHn } from "./hn.js";
 import { fetchInternshala } from "./internshala.js";
 import { fetchProductHunt } from "./producthunt.js";
@@ -23,12 +24,15 @@ interface SourceConfig {
     arbeitnow?: { enabled?: boolean; limit?: number };
     internshala?: { enabled?: boolean; limit?: number };
     unstop?: { enabled?: boolean; limit?: number };
+    google?: GoogleSourceConfig;
   };
 }
 
 export interface CollectOptions {
   /** Only run these sources, if set. */
   only?: Set<string>;
+  /** The matcher profile; Google compiles its query from this. */
+  profile: Profile;
 }
 
 export function loadSourceConfig(path: string): SourceConfig {
@@ -38,7 +42,7 @@ export function loadSourceConfig(path: string): SourceConfig {
 /** Runs every enabled source in parallel; one failing source never sinks the run. */
 export async function collectStartups(
   config: SourceConfig,
-  opts: CollectOptions = {},
+  opts: CollectOptions,
 ): Promise<Startup[]> {
   const s = config.sources ?? {};
   const want = (name: string) => (!opts.only || opts.only.has(name)) && s[name as keyof SourceConfig["sources"]]?.enabled !== false;
@@ -83,6 +87,9 @@ export async function collectStartups(
         hiringOnly: s.yc?.hiringOnly,
       }),
     );
+  }
+  if (want("google")) {
+    track("google", fetchGoogleScan(opts.profile, s.google ?? {}));
   }
 
   const settled = await Promise.allSettled(jobs);

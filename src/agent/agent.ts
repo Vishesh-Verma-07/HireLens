@@ -99,7 +99,7 @@ export function addExclusion(root: string, name: string): void {
 
 async function runMatcher(root: string, profile: Profile): Promise<Match[]> {
   const sourceConfig = loadSourceConfig(resolve(root, "config", "sources.yaml"));
-  const startups = await collectStartups(sourceConfig);
+  const startups = await collectStartups(sourceConfig, { profile });
   logger.info(`Collected ${startups.length} raw startup records`);
   return rankStartups(startups, profile);
 }

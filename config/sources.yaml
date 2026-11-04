@@ -1,5 +1,6 @@
 # Which public sources to sweep, and how.
 # Every source here is public data. No login, no scraping behind auth.
+# Google uses a search API key from .env; it is not an account login.
 
 sources:
   hn:
@@ -56,3 +57,29 @@ sources:
     hiringOnly: true
     # Optional keyword to narrow the directory, e.g. "payments".
     # query: ""
+
+  # Google-only Board Scan. Compiles the profile into ATS-targeted Google
+  # queries, searches them through SerpAPI or Google Custom Search, and feeds
+  # the ATS results into the normal matcher/digest.
+  #
+  # Credentials (set in .env):
+  #   SERPAPI_KEY=...                      (preferred)
+  #   or GOOGLE_API_KEY=... + GOOGLE_CSE_ID=...
+  google:
+    enabled: true
+    # ATS results kept across all runs, and how many result pages per run.
+    limit: 20
+    pages: 2
+    # Fetch each public ATS page so scoring sees the full description.
+    enrich: true
+    enrichLimit: 20
+    # Query defaults come from profile.yaml. Override any of them here:
+    # roles:
+    #   - software engineer
+    # location: "Remote"
+    posted: d1
+    # level: entry
+    # setup: remote
+    boards: core
+    # variants: false
+    # sponsored: true

@@ -8,7 +8,15 @@ const EARLY_TITLES =
   /(?<![a-z])(founding engineer|new grad|new graduate|junior|entry[- ]level|graduate|internship|intern|trainee|fresher|associate)(?![a-z])/i;
 
 /** Sources where `oneLiner` is an actual job title, not a company tagline. */
-const JOB_POSTING_SOURCES = new Set(["remoteok", "remotive", "arbeitnow", "internshala", "unstop", "hn"]);
+const JOB_POSTING_SOURCES = new Set([
+  "remoteok",
+  "remotive",
+  "arbeitnow",
+  "internshala",
+  "unstop",
+  "hn",
+  "google",
+]);
 
 /**
  * Skills that are too common to prove a fit on their own. They still add to the

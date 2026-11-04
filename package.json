@@ -8,6 +8,7 @@
     "match": "tsx src/index.ts",
     "match:all": "tsx src/index.ts --all",
     "match:llm": "tsx src/index.ts --llm",
+    "scan": "tsx src/scan/cli.ts",
     "bot": "tsx src/channels/email/bot.ts",
     "bot:once": "tsx src/channels/email/bot.ts --once",
     "email:test": "tsx src/channels/email/bot.ts --test",

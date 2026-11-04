@@ -16,6 +16,9 @@
 #
 # Required repository secrets (Settings → Secrets and variables → Actions):
 #   SMTP_USER, SMTP_PASS, MAIL_FROM, MAIL_TO
+#
+# Board Scan (optional, but needed for Google results in the digest):
+#   SERPAPI_KEY, or GOOGLE_API_KEY + GOOGLE_CSE_ID
 
 name: jobfinder bot
 
@@ -72,6 +75,10 @@ jobs:
           MAIL_TO: ${{ secrets.MAIL_TO }}
           MAIL_DAILY_HOUR: "0"
           MAIL_POLL_MINUTES: "30"
+          # Empty when the secret is absent, so `google` simply skips.
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
         run: npm run bot:once
 
       - name: Keep the schedule alive

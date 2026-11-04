@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import {
   getSnapshot,
@@ -9,6 +8,7 @@ import {
 } from "../../agent/agent.js";
 import { logger } from "../../lib/log.js";
 import { localDate } from "../../lib/date.js";
+import { loadEnv } from "../../lib/env.js";
 import { selectForDigest } from "../../match/select.js";
 import { renderDigestHtml, renderDigestText } from "../../report/digest.js";
 import { loadEmailConfig, type EmailConfig } from "./config.js";
@@ -23,17 +23,6 @@ const ROOT = resolve(import.meta.dirname, "../../..");
 const PAGE_SIZE = 10;
 /** No employer may take more than this many slots in one digest. */
 const PER_COMPANY = 2;
-
-function loadEnv(): void {
-  const path = resolve(ROOT, ".env");
-  try {
-    if (existsSync(path) && typeof process.loadEnvFile === "function") {
-      process.loadEnvFile(path);
-    }
-  } catch (err) {
-    logger.warn(`could not load .env — ${(err as Error).message}`);
-  }
-}
 
 /**
  * URLs already emailed in an earlier digest. Falls back to "nothing seen" if
@@ -127,7 +116,7 @@ async function tick(config: EmailConfig): Promise<void> {
 }
 
 async function main(): Promise<void> {
-  loadEnv();
+  loadEnv(ROOT);
   const args = new Set(process.argv.slice(2));
   const config = loadEmailConfig();
 

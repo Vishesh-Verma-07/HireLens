@@ -46,6 +46,11 @@ Scope is **matching only** — no email sending to founders.
   hiring?" thread, **funding** RSS feeds, **Product Hunt** launches, plus fresh
   job boards — **RemoteOK**, **Remotive**, **Arbeitnow**, and India-focused
   **Internshala** + **Unstop**.
+- **Board Scan (Google)** — compiles the profile into Google queries that
+  target ATS domains directly, for boards that don't expose a feed. It searches
+  each query through SerpAPI or Google Custom Search, turns every ATS result
+  into a normal startup/job record, and feeds those records through the same
+  ranking and digest/email pipeline (see §3).
 - **Matching** — a transparent, deterministic score (0–100). Whole-word
   matching (so `java` ≠ `javascript`), plus domain fit, signal strength,
   recency, stage, location/remote, and junior/senior awareness. Early-career
@@ -81,6 +86,69 @@ npm run match:all             # ignore the seen-store
 npm run match:llm             # refine the top slice with an LLM (needs OPENAI_API_KEY)
 npm run match -- --limit 25 --source yc,hn
 ```
+
+### Board Scan — Google results in the digest
+
+The API/RSS sources above only see boards that publish a feed. Board Scan covers
+the rest by compiling the profile into Google queries that target
+applicant-tracking systems directly, e.g.:
+
+```text
+("software engineer" OR "backend engineer") Remote
+(-senior -staff -principal -director -manager)
+(remote OR "work from home")
+(site:job-boards.greenhouse.io OR site:jobs.lever.co OR ...)
+```
+
+It is a local implementation of the query-builder pattern observed on
+[jobboardscan.com](https://jobboardscan.com/), reconstructed from the page's
+served JavaScript. It is **Google-only**: the query is filtered with Google's
+`tbs=qdr:*` time parameter.
+
+`npm run scan` is the preview: it prints the exact queries and live Google URLs
+without making a request. The `google` source then runs those same queries,
+keeps the links that point at the selected ATS boards, and turns each usable
+result into a normal `Startup` with the company, role, location, URL, and a
+hiring signal.
+When `enrich` is on (the default), it also fetches the public ATS page so the
+scorer sees the full description instead of only the search snippet. Those
+records go through `rankStartups` like every other source, so the ones that fit
+your profile appear in `npm run match` and in the daily email.
+
+It does **not** scrape Google's HTML. Google blocks automated result pages, so
+the source uses a results API instead. Configure one provider in `.env`:
+
+- **SerpAPI** — `SERPAPI_KEY` (preferred; one key, returns Google result dates).
+- **Google Custom Search JSON API** — `GOOGLE_API_KEY` + `GOOGLE_CSE_ID`
+  (official; free 100 queries/day; the search engine must be set to
+  *Search the entire web*, otherwise it may ignore the `site:` clauses).
+
+```bash
+npm run scan                                  # preview: profile defaults, Remote, 24h, core ATS boards
+npm run scan -- --boards all                  # every board in the catalogue
+npm run scan -- --role "frontend developer" --location Bengaluru --posted w
+npm run scan -- --open                        # open each Google URL in the browser
+
+npm run match -- --source google --all --no-write   # search + rank now, without writing the digest
+npm run email:test                            # send a test digest that may include Google matches
+npm run email:send                            # send today's daily digest
+```
+
+Useful flags: `--posted` (`h1|h4|h8|h12|d1|d2|d3|w|m`), `--level`, `--setup`,
+`--boards`, `--variants`, `--no-sponsored`, `--json`, `--no-write`. Each scan
+preview also writes a Markdown plan to `out/scan-<date>.md`.
+
+Google stops reading a query after roughly 32 terms, so long board lists are
+split into runs and only the first four runs are kept (the drop is reported).
+The source keeps at most `google.limit` ATS results across runs (default 20) and
+fetches `google.pages` result pages per run (default 2). All of those knobs live
+in `config/sources.yaml`.
+
+Two freshness notes: Google's time filter applies to when Google indexed the
+page, not a guaranteed posting date; and for `posted: all` a result without a
+usable date is dropped by the normal freshness gate. SerpAPI honours the hourly
+`tbs` filters directly; the Google Custom Search API can only round hourly
+selections up to its `d1` (24-hour) `dateRestrict`.
 
 ---
 
@@ -156,9 +224,11 @@ because the **mailbox** is the source of truth:
 - the daily digest is de-duplicated by looking for it *in the mailbox*
   (`dailyDigestExists` in `src/channels/email/mailer.ts`), not in a local file.
 
-Setup: push the repo, then add four secrets under *Settings → Secrets and
-variables → Actions* — `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO` — and
-run *Actions → jobfinder bot → Run workflow* once to confirm.
+Setup: push the repo, then add four mail secrets under *Settings → Secrets and
+variables → Actions* — `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`, `MAIL_TO`. For
+Google results in the digest, also add `SERPAPI_KEY`, or `GOOGLE_API_KEY` +
+`GOOGLE_CSE_ID`. Then run *Actions → jobfinder bot → Run workflow* once to
+confirm.
 
 **Caveat: GitHub's cron is best-effort.** Ticks are delayed and sometimes
 skipped under load (we saw a multi-hour gap on the first day). So the workflow
@@ -219,7 +289,9 @@ src/
   agent/agent.ts        # transport-agnostic command core + daily snapshot
   profile.ts            # profile.yaml → Profile
   types.ts              # Signal / Startup / Profile / Match
-  sources/              # yc, hn, funding, producthunt, remoteok, remotive, arbeitnow, internshala, unstop
+  sources/              # yc, hn, funding, producthunt, remoteok, remotive, arbeitnow, internshala, unstop, google
+  sources/google.ts     # Google results API → ATS Startups
+  scan/                 # Google-only query compiler + `npm run scan`
   match/score.ts        # deterministic, explainable fit score
   match/rank.ts         # dedupe across sources, then sort
   match/llm.ts          # optional LLM re-rank
@@ -228,7 +300,7 @@ src/
   channels/email/       # config, mailer (SMTP+IMAP), bot loop
 config/sources.yaml     # which sources, which feeds, YC options
 profile/profile.yaml    # YOUR profile  ← the "for me only" file
-.env.example            # mail credentials template
+.env.example            # mail + Google search credentials template
 ```
 
 ## 8. Going multi-user later
