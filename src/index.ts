@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { logger } from "./lib/log.js";
 import { localDate } from "./lib/date.js";
 import { loadEnv } from "./lib/env.js";
+import { syncMatchesToHub } from "./hub/jobs.js";
 import { llmAvailable, llmRefine } from "./match/llm.js";
 import { rankStartups } from "./match/rank.js";
 import { loadProfile } from "./profile.js";
@@ -59,6 +60,10 @@ async function main(): Promise<void> {
       logger.warn("--llm passed but OPENAI_API_KEY is not set; skipping LLM refine");
     }
   }
+
+  // Fire-and-forget: Hub upserts by (source, sourceId), so this also refreshes
+  // a job whenever its score or scraped data changed since the last run.
+  void syncMatchesToHub(root, ranked);
 
   const store = loadStore(storePath);
   const fresh = args.showAll ? ranked : ranked.filter((m) => !store.seen[m.startup.id]);

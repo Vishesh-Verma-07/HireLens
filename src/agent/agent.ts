@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { logger } from "../lib/log.js";
 import { localDate } from "../lib/date.js";
+import { syncMatchesToHub } from "../hub/jobs.js";
 import { rankStartups } from "../match/rank.js";
 import { selectForDigest } from "../match/select.js";
 import { loadProfile } from "../profile.js";
@@ -101,7 +102,13 @@ async function runMatcher(root: string, profile: Profile): Promise<Match[]> {
   const sourceConfig = loadSourceConfig(resolve(root, "config", "sources.yaml"));
   const startups = await collectStartups(sourceConfig, { profile });
   logger.info(`Collected ${startups.length} raw startup records`);
-  return rankStartups(startups, profile);
+  const ranked = rankStartups(startups, profile);
+
+  // Fire-and-forget: every scored match is pushed to Hub (idempotent upsert).
+  // Re-runs refresh a job whenever its score or data changed.
+  void syncMatchesToHub(root, ranked);
+
+  return ranked;
 }
 
 export async function getSnapshot(root: string, force = false): Promise<Snapshot> {

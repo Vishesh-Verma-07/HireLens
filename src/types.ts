@@ -50,6 +50,8 @@ export interface Startup {
   batch?: string;
   source: SourceId;
   signals: Signal[];
+  /** Normalized company domain, when the source provides one. */
+  companyDomain?: string;
 }
 
 export interface Preferences {
