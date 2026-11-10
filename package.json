@@ -13,6 +13,7 @@
     "bot:once": "tsx src/channels/email/bot.ts --once",
     "email:test": "tsx src/channels/email/bot.ts --test",
     "email:send": "tsx src/channels/email/bot.ts --send-now",
+    "test": "node --import tsx --test \"src/**/*.test.ts\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
