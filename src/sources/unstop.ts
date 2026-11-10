@@ -1,6 +1,13 @@
 import { fetchJson } from "../lib/http.js";
 import { htmlToText, isTechRole } from "../lib/text.js";
-import type { Startup } from "../types.js";
+import type { SourceId, Startup } from "../types.js";
+import type { BaseSourceConfig, SourceContext } from "./types.js";
+
+export const sourceId = "unstop" as const satisfies SourceId;
+
+export interface UnstopConfig extends BaseSourceConfig {
+  limit?: number;
+}
 
 /**
  * Unstop's public opportunity search (India-focused jobs + internships).
@@ -68,7 +75,11 @@ function toNumber(value: unknown): number | undefined {
   return undefined;
 }
 
-export async function fetchUnstop(limit: number): Promise<Startup[]> {
+export async function fetchUnstop(
+  config: UnstopConfig = {},
+  _context?: SourceContext,
+): Promise<Startup[]> {
+  const limit = config.limit ?? 60;
   const out: Startup[] = [];
 
   for (let page = 1; page <= 4 && out.length < limit; page++) {
@@ -125,7 +136,7 @@ export async function fetchUnstop(limit: number): Promise<Startup[]> {
         locations: [...new Set(locations)],
         remote: remote || undefined,
         industry: [],
-        source: "unstop",
+        source: sourceId,
         signals: [
           {
             type: "hiring",

@@ -1,6 +1,13 @@
 import { fetchJson } from "../lib/http.js";
 import { htmlToText, isTechRole } from "../lib/text.js";
-import type { Startup } from "../types.js";
+import type { SourceId, Startup } from "../types.js";
+import type { BaseSourceConfig, SourceContext } from "./types.js";
+
+export const sourceId = "remotive" as const satisfies SourceId;
+
+export interface RemotiveConfig extends BaseSourceConfig {
+  limit?: number;
+}
 
 interface RemotiveJob {
   id?: number;
@@ -19,7 +26,11 @@ interface RemotiveResponse {
 }
 
 /** Remotive's public remote-jobs API. Smaller than RemoteOK, but dated. */
-export async function fetchRemotive(limit: number): Promise<Startup[]> {
+export async function fetchRemotive(
+  config: RemotiveConfig = {},
+  _context?: SourceContext,
+): Promise<Startup[]> {
+  const limit = config.limit ?? 60;
   const data = await fetchJson<RemotiveResponse>(
     `https://remotive.com/api/remote-jobs?limit=${Math.min(limit, 100)}`,
     { headers: { accept: "application/json" } },
@@ -43,7 +54,7 @@ export async function fetchRemotive(limit: number): Promise<Startup[]> {
       locations: location ? [location] : [],
       remote: true,
       industry,
-      source: "remotive",
+      source: sourceId,
       signals: [
         {
           type: "hiring",

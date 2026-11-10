@@ -1,6 +1,13 @@
 import { slug } from "../lib/text.js";
-import type { Startup } from "../types.js";
+import type { SourceId, Startup } from "../types.js";
+import type { BaseSourceConfig, SourceContext } from "./types.js";
 import { fetchFeed, type FeedItem } from "./rss.js";
+
+export const sourceId = "funding" as const satisfies SourceId;
+
+export interface FundingConfig extends BaseSourceConfig {
+  feeds?: string[];
+}
 
 const RAISE_VERB =
   /^(.{2,60}?)[\s,]+(?:has\s+)?(?:raises|raised|lands|landed|secures|secured|closes|closed|nabs|nabbed|scores|scored|snags|hauls|bags|gets|is\s+raising|pulls\s+in)\b/i;
@@ -48,7 +55,11 @@ function stageFromTitle(title: string): string | undefined {
   return undefined;
 }
 
-export async function fetchFunding(feeds: string[]): Promise<Startup[]> {
+export async function fetchFunding(
+  config: FundingConfig = {},
+  _context?: SourceContext,
+): Promise<Startup[]> {
+  const feeds = config.feeds ?? [];
   const out: Startup[] = [];
 
   for (const feed of feeds) {
@@ -73,7 +84,7 @@ export async function fetchFunding(feeds: string[]): Promise<Startup[]> {
         locations: [],
         stage: stageFromTitle(item.title),
         industry: [],
-        source: "funding",
+        source: sourceId,
         signals: [
           {
             type: "raised",

@@ -35,7 +35,7 @@ test("fetchRemotive still parses the API through the shared HTTP client", async 
   }) as typeof fetch;
 
   try {
-    const jobs = await fetchRemotive(10);
+    const jobs = await fetchRemotive({ limit: 10 });
 
     assert.match(requestedUrl, /^https:\/\/remotive\.com\/api\/remote-jobs\?limit=10$/);
     assert.equal(jobs.length, 1);

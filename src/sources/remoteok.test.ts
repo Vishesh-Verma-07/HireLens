@@ -40,7 +40,7 @@ test("fetchRemoteOk still parses the feed through the shared HTTP client", async
   }) as typeof fetch;
 
   try {
-    const jobs = await fetchRemoteOk(10);
+    const jobs = await fetchRemoteOk({ limit: 10 });
 
     assert.equal(requestedUrl, "https://remoteok.com/api");
     assert.equal(jobs.length, 1);

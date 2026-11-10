@@ -1,6 +1,13 @@
 import { fetchJson } from "../lib/http.js";
 import { htmlToText, isTechRole } from "../lib/text.js";
-import type { Startup } from "../types.js";
+import type { SourceId, Startup } from "../types.js";
+import type { BaseSourceConfig, SourceContext } from "./types.js";
+
+export const sourceId = "remoteok" as const satisfies SourceId;
+
+export interface RemoteOkConfig extends BaseSourceConfig {
+  limit?: number;
+}
 
 interface RemoteOkJob {
   id?: string;
@@ -20,7 +27,11 @@ interface RemoteOkJob {
  * The first array element is an attribution notice, so we skip anything
  * without a position.
  */
-export async function fetchRemoteOk(limit: number): Promise<Startup[]> {
+export async function fetchRemoteOk(
+  config: RemoteOkConfig = {},
+  _context?: SourceContext,
+): Promise<Startup[]> {
+  const limit = config.limit ?? 100;
   const data = await fetchJson<unknown>("https://remoteok.com/api", {
     headers: { accept: "application/json" },
   });
@@ -45,7 +56,7 @@ export async function fetchRemoteOk(limit: number): Promise<Startup[]> {
       locations: location ? [location] : [],
       remote: true,
       industry: job.tags ?? [],
-      source: "remoteok",
+      source: sourceId,
       signals: [
         {
           type: "hiring",

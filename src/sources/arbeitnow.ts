@@ -1,6 +1,13 @@
 import { fetchJson } from "../lib/http.js";
 import { htmlToText, isTechRole } from "../lib/text.js";
-import type { Startup } from "../types.js";
+import type { SourceId, Startup } from "../types.js";
+import type { BaseSourceConfig, SourceContext } from "./types.js";
+
+export const sourceId = "arbeitnow" as const satisfies SourceId;
+
+export interface ArbeitnowConfig extends BaseSourceConfig {
+  limit?: number;
+}
 
 interface ArbeitnowJob {
   slug?: string;
@@ -27,7 +34,11 @@ const INDIA =
  * we keep only remote or India-based technical roles to respect the profile's
  * location preferences.
  */
-export async function fetchArbeitnow(limit: number): Promise<Startup[]> {
+export async function fetchArbeitnow(
+  config: ArbeitnowConfig = {},
+  _context?: SourceContext,
+): Promise<Startup[]> {
+  const limit = config.limit ?? 60;
   const data = await fetchJson<ArbeitnowResponse>(
     "https://www.arbeitnow.com/api/job-board-api",
     { headers: { accept: "application/json" } },
@@ -58,7 +69,7 @@ export async function fetchArbeitnow(limit: number): Promise<Startup[]> {
       locations: remote ? ["Remote"] : location ? [location] : [],
       remote: remote || undefined,
       industry: job.tags ?? [],
-      source: "arbeitnow",
+      source: sourceId,
       signals: [
         {
           type: "hiring",

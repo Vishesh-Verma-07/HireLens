@@ -26,7 +26,10 @@ import {
   type SetupId,
   type TimeId,
 } from "../scan/query.js";
-import type { Profile, Startup } from "../types.js";
+import type { Profile, SourceId, Startup } from "../types.js";
+import type { SourceContext } from "./types.js";
+
+export const sourceId = "google" as const satisfies SourceId;
 
 export interface GoogleSourceConfig {
   enabled?: boolean;
@@ -612,7 +615,7 @@ function toStartup(
     locations,
     remote,
     industry: [],
-    source: "google",
+    source: sourceId,
     signals: [
       {
         type: "hiring",
@@ -758,7 +761,7 @@ async function fetchGoogleJobs(
       locations,
       remote: remote || undefined,
       industry: [],
-      source: "google",
+      source: sourceId,
       signals: [
         {
           type: "hiring",
@@ -782,9 +785,15 @@ async function fetchGoogleJobs(
  * that point at the selected boards, and returns them as Startups.
  */
 export async function fetchGoogleScan(
-  profile: Profile,
   config: GoogleSourceConfig = {},
+  context?: SourceContext,
 ): Promise<Startup[]> {
+  const profile = context?.profile;
+  if (!profile) {
+    logger.warn("google: missing profile context — skipping");
+    return [];
+  }
+
   if (!googleConfigured()) {
     logger.warn(
       "google: no search credentials — set SERPAPI_KEY or GOOGLE_API_KEY + GOOGLE_CSE_ID",

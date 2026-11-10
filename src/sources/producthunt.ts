@@ -1,8 +1,19 @@
 import { slug } from "../lib/text.js";
-import type { Startup } from "../types.js";
+import type { SourceId, Startup } from "../types.js";
+import type { BaseSourceConfig, SourceContext } from "./types.js";
 import { fetchFeed } from "./rss.js";
 
-export async function fetchProductHunt(feeds: string[]): Promise<Startup[]> {
+export const sourceId = "producthunt" as const satisfies SourceId;
+
+export interface ProductHuntConfig extends BaseSourceConfig {
+  feeds?: string[];
+}
+
+export async function fetchProductHunt(
+  config: ProductHuntConfig = {},
+  _context?: SourceContext,
+): Promise<Startup[]> {
+  const feeds = config.feeds ?? [];
   const out: Startup[] = [];
 
   for (const feed of feeds) {
@@ -20,7 +31,7 @@ export async function fetchProductHunt(feeds: string[]): Promise<Startup[]> {
         url: item.link,
         locations: [],
         industry: [],
-        source: "producthunt",
+        source: sourceId,
         signals: [{ type: "launched", date: item.date, text: item.title, url: item.link }],
       });
     }

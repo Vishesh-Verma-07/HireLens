@@ -1,6 +1,13 @@
 import { fetchText } from "../lib/http.js";
 import { htmlToText, isTechRole } from "../lib/text.js";
-import type { Startup } from "../types.js";
+import type { SourceId, Startup } from "../types.js";
+import type { BaseSourceConfig, SourceContext } from "./types.js";
+
+export const sourceId = "internshala" as const satisfies SourceId;
+
+export interface InternshalaConfig extends BaseSourceConfig {
+  limit?: number;
+}
 
 /**
  * Internshala's public fresher/junior job pages.
@@ -115,7 +122,11 @@ function parseCards(html: string): Card[] {
   return cards;
 }
 
-export async function fetchInternshala(limit: number): Promise<Startup[]> {
+export async function fetchInternshala(
+  config: InternshalaConfig = {},
+  _context?: SourceContext,
+): Promise<Startup[]> {
+  const limit = config.limit ?? 60;
   const cardsById = new Map<string, Card>();
 
   for (const page of PAGES) {
@@ -169,7 +180,7 @@ export async function fetchInternshala(limit: number): Promise<Startup[]> {
       locations,
       remote: remote || undefined,
       industry: [],
-      source: "internshala",
+      source: sourceId,
       signals: [
         {
           type: "hiring",

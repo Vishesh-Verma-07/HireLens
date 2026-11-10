@@ -1,7 +1,19 @@
 import { fetchText } from "../lib/http.js";
 import { logger } from "../lib/log.js";
 import { slug } from "../lib/text.js";
-import type { Startup } from "../types.js";
+import type { SourceId, Startup } from "../types.js";
+import type { BaseSourceConfig, SourceContext } from "./types.js";
+
+export const sourceId = "yc" as const satisfies SourceId;
+
+export interface YcConfig extends BaseSourceConfig {
+  url?: string;
+  limit?: number;
+  query?: string;
+  hiringOnly?: boolean;
+}
+
+const DEFAULT_URL = "https://www.ycombinator.com/companies";
 
 /**
  * Y Combinator company directory.
@@ -33,13 +45,6 @@ interface YcHit {
   isHiring?: boolean;
 }
 
-export interface YcOptions {
-  url: string;
-  limit: number;
-  query?: string;
-  hiringOnly?: boolean;
-}
-
 async function readAlgoliaOpts(pageUrl: string): Promise<AlgoliaOpts> {
   const html = await fetchText(pageUrl);
   const match = html.match(/AlgoliaOpts\s*=\s*(\{[\s\S]*?\})\s*;/);
@@ -67,16 +72,21 @@ function mapHit(hit: YcHit, baseUrl: string): Startup {
     industry: hit.industries ?? [],
     employees: hit.team_size ? String(hit.team_size) : undefined,
     batch: hit.batch,
-    source: "yc",
+    source: sourceId,
     signals: hit.isHiring
       ? [{ type: "hiring", text: `Actively hiring (YC ${hit.batch ?? "company"})` }]
       : [{ type: "news", text: `Listed in the YC directory${hit.batch ? ` (${hit.batch})` : ""}` }],
   };
 }
 
-export async function fetchYc(opts: YcOptions): Promise<Startup[]> {
+export async function fetchYc(
+  options: YcConfig = {},
+  _context?: SourceContext,
+): Promise<Startup[]> {
+  const url = options.url ?? DEFAULT_URL;
+  const limit = options.limit ?? 100;
   try {
-    const config = await readAlgoliaOpts(opts.url);
+    const config = await readAlgoliaOpts(url);
     const host = `https://${config.app.toLowerCase()}-dsn.algolia.net`;
     const res = await fetch(`${host}/1/indexes/YCCompany_production/query`, {
       method: "POST",
@@ -86,9 +96,9 @@ export async function fetchYc(opts: YcOptions): Promise<Startup[]> {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        query: opts.query ?? "",
-        hitsPerPage: Math.min(opts.limit, 1000),
-        facetFilters: opts.hiringOnly === false ? [] : ["isHiring:true"],
+        query: options.query ?? "",
+        hitsPerPage: Math.min(limit, 1000),
+        facetFilters: options.hiringOnly === false ? [] : ["isHiring:true"],
         attributesToRetrieve: [
           "name",
           "slug",
@@ -109,7 +119,7 @@ export async function fetchYc(opts: YcOptions): Promise<Startup[]> {
     }
 
     const data = (await res.json()) as { hits?: YcHit[] };
-    return (data.hits ?? []).map((h) => mapHit(h, opts.url));
+    return (data.hits ?? []).map((h) => mapHit(h, url));
   } catch (err) {
     logger.warn(`yc: failed — ${(err as Error).message}`);
     return [];

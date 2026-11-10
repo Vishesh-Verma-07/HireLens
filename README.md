@@ -301,6 +301,7 @@ src/
   profile.ts            # profile.yaml → Profile
   types.ts              # Signal / Startup / Profile / Match
   sources/              # yc, hn, funding, producthunt, remoteok, remotive, arbeitnow, internshala, unstop, google
+  sources/registry.ts   # auto-discovers modules that export sourceId + fetch{Name}
   sources/google.ts     # Google results API → ATS Startups
   scan/                 # Google-only query compiler + `npm run scan`
   match/score.ts        # deterministic, explainable fit score
@@ -313,6 +314,15 @@ config/sources.yaml     # which sources, which feeds, YC options
 profile/profile.yaml    # YOUR profile  ← the "for me only" file
 .env.example            # mail + Google search credentials template
 ```
+
+### Adding a source
+
+Drop one file into `src/sources/` that exports `sourceId`, a `<Name>Config`
+type, and a `fetch<Name>(config, context)` function. The registry discovers it
+on the next run — there is no `index.ts` import to add. Helpers (no `sourceId`)
+and `*.test.ts` files are ignored. Add the id to the `SourceId` union in
+`src/types.ts`, and tune it in `config/sources.yaml` if it needs non-default
+settings. The header of `src/sources/registry.ts` has a copy-paste template.
 
 ## 8. Going multi-user later
 

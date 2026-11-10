@@ -1,6 +1,11 @@
 import { fetchJson } from "../lib/http.js";
 import { firstLine, htmlToText, slug } from "../lib/text.js";
-import type { Startup } from "../types.js";
+import type { SourceId, Startup } from "../types.js";
+import type { BaseSourceConfig, SourceContext } from "./types.js";
+
+export const sourceId = "hn" as const satisfies SourceId;
+
+export type HnConfig = BaseSourceConfig;
 
 interface AlgoliaHit {
   objectID: string;
@@ -68,14 +73,17 @@ function parseComment(text: string, date: string | undefined, id: number): Start
     locations: locationFrom(parts, remote),
     remote: remote || undefined,
     industry: [],
-    source: "hn",
+    source: sourceId,
     signals: [
       { type: "hiring", date, text: line.slice(0, 400), url: `https://news.ycombinator.com/item?id=${id}` },
     ],
   };
 }
 
-export async function fetchHn(): Promise<Startup[]> {
+export async function fetchHn(
+  _config: HnConfig = {},
+  _context?: SourceContext,
+): Promise<Startup[]> {
   const story = await latestHiringStory();
   if (!story) return [];
 
