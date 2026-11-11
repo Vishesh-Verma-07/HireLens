@@ -1,12 +1,21 @@
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
+import { dedupeStartups, seenKey } from "../lib/dedupe.js";
 import { logger } from "../lib/log.js";
 import {
   emitCollectionMetrics,
   measureSourceRun,
   type SourceRunTelemetry,
 } from "../lib/metrics.js";
+import {
+  isSeen,
+  loadStore,
+  markSeen,
+  pruneSeen,
+  saveStore,
+  SEEN_TTL_DAYS,
+} from "../store/db.js";
 import type { Profile, Startup } from "../types.js";
 import {
   loadSourceRegistry,
@@ -61,6 +70,16 @@ export interface CollectOptions {
   runId?: string;
   /** Called once per source after it settles. Errors here never sink the run. */
   onSourceRun?: (telemetry: SourceRunTelemetry) => void;
+  /**
+   * Path to `data/store.json`. When set, ids seen within `seenTtlDays` are
+   * filtered out of the result and the ids returned by this run are recorded
+   * there, which is what makes a second run on the same day a no-op.
+   */
+  storePath?: string;
+  /** How long a seen id suppresses a role. Defaults to 30 days. */
+  seenTtlDays?: number;
+  /** Clock override, for deterministic TTL tests. */
+  now?: () => Date;
 }
 
 export function loadSourceConfig(path: string): SourceConfig {
@@ -102,7 +121,6 @@ export async function collectStartups(
     emitCollectionMetrics(runId, [], Math.round(performance.now() - startedAt));
     return [];
   }
-
   const outcomes = await Promise.all(
     run.map(({ source, settings }) =>
       measureSourceRun(source.id, runId, () =>
@@ -134,11 +152,49 @@ export async function collectStartups(
   }
 
   const durationMs = Math.round(performance.now() - startedAt);
-  emitCollectionMetrics(runId, runs, durationMs);
+  const { startups: deduped, removed } = dedupeStartups(all);
+  const dedupedStartups = applySeenFilter(deduped, opts);
+  emitCollectionMetrics(runId, runs, durationMs, removed);
+
   const failed = runs.filter((source) => !source.ok).length;
   logger.info(
-    `sources: ${runs.length - failed}/${runs.length} ok, ${all.length} startups in ${durationMs}ms (run ${runId})`,
+    `sources: ${runs.length - failed}/${runs.length} ok, ${all.length} startups` +
+      `${removed > 0 ? ` → ${deduped.length} after dedupe` : ""}` +
+      `${dedupedStartups.length < deduped.length ? ` → ${dedupedStartups.length} new` : ""}` +
+      ` in ${durationMs}ms (run ${runId})`,
   );
 
-  return all;
+  return dedupedStartups;
+}
+
+/**
+ * Cross-run dedupe. Loads the seen-store, drops expired entries, removes roles
+ * seen within the TTL, then records everything this run returns. Recording all
+ * returned ids (not just the digest slice) is what makes a second run on the
+ * same day return nothing new.
+ */
+function applySeenFilter(startups: Startup[], opts: CollectOptions): Startup[] {
+  if (!opts.storePath) return startups;
+
+  const ttlDays = opts.seenTtlDays ?? SEEN_TTL_DAYS;
+  const now = opts.now?.() ?? new Date();
+  const nowMs = now.getTime();
+  const store = loadStore(opts.storePath);
+
+  const pruned = pruneSeen(store, ttlDays, nowMs);
+  if (pruned > 0) logger.debug(`store: pruned ${pruned} expired seen ids`);
+
+  const fresh = startups.filter((startup) => {
+    const keys = [startup.id, seenKey(startup)].filter(Boolean);
+    return !keys.some((key) => isSeen(store, key, ttlDays, nowMs));
+  });
+
+  const keys: string[] = [];
+  for (const startup of fresh) {
+    keys.push(startup.id, seenKey(startup));
+  }
+  markSeen(store, keys.filter(Boolean), now);
+  saveStore(opts.storePath, store);
+
+  return fresh;
 }

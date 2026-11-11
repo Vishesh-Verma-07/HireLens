@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import { HttpError } from "../lib/http.js";
 import {
@@ -7,6 +10,7 @@ import {
   type MetricTags,
   type SourceRunTelemetry,
 } from "../lib/metrics.js";
+import { loadStore } from "../store/db.js";
 import type { Profile, SourceId, Startup } from "../types.js";
 import { collectStartups } from "./index.js";
 import type { DiscoveredSource } from "./types.js";
@@ -58,6 +62,25 @@ function startup(id: string, source: SourceId): Startup {
 
 function fakeSource(id: SourceId, fetch: DiscoveredSource["fetch"]): DiscoveredSource {
   return { id, fetch, file: `${id}.ts` };
+}
+
+function posting(
+  id: string,
+  source: SourceId,
+  name = "Acme",
+  title = "Senior Software Engineer (Remote)",
+  locations = ["Remote"],
+): Startup {
+  return {
+    id,
+    name,
+    oneLiner: title,
+    locations,
+    remote: true,
+    industry: [],
+    source,
+    signals: [{ type: "hiring", text: `${source} posting` }],
+  };
 }
 
 test("collectStartups emits source metrics for every selected source", async () => {
@@ -258,4 +281,80 @@ test("a run with no selected sources still emits collection metrics", async () =
   assert.ok(
     samples.some((sample) => sample.name === SOURCE_METRICS.collectionSourcesTotal),
   );
+});
+
+test("collectStartups merges the same role across sources and reports duplicates", async () => {
+  const sources = [
+    fakeSource("remoteok", async () => [
+      posting("remoteok:1", "remoteok", "Acme, Inc."),
+    ]),
+    fakeSource("remotive", async () => [posting("remotive:1", "remotive", "Acme")]),
+  ];
+  const { samples, restore } = capture();
+
+  let jobs: Startup[] = [];
+  try {
+    jobs = await collectStartups({}, { profile, runId: "run-dedupe" }, sources);
+  } finally {
+    restore();
+  }
+
+  assert.equal(jobs.length, 1);
+  assert.deepEqual(jobs[0]?.sources, ["remoteok", "remotive"]);
+  assert.equal(jobs[0]?.signals.length, 2);
+
+  const duplicates = samples.find(
+    (sample) => sample.name === SOURCE_METRICS.collectionDuplicatesRemoved,
+  );
+  assert.equal(duplicates?.value, 1);
+  assert.equal(duplicates?.tags.run_id, "run-dedupe");
+});
+
+test("collectStartups suppresses seen roles across boards and after the TTL", async () => {
+  const directory = mkdtempSync(join(tmpdir(), "jobfinder-collect-"));
+  const storePath = join(directory, "store.json");
+  const remoteok = [fakeSource("remoteok", async () => [posting("remoteok:1", "remoteok")])];
+  const remotive = [fakeSource("remotive", async () => [posting("remotive:1", "remotive")])];
+
+  try {
+    const first = await collectStartups(
+      {},
+      { profile, runId: "run-first", storePath },
+      remoteok,
+    );
+    assert.equal(first.length, 1);
+
+    // Re-running the same day returns nothing, even if a different board
+    // publishes the same role: the store holds both the source id and the
+    // source-independent dedupe key.
+    const sameDay = await collectStartups(
+      {},
+      { profile, runId: "run-second", storePath },
+      remotive,
+    );
+    assert.deepEqual(sameDay, []);
+
+    const store = loadStore(storePath);
+    assert.ok(store.seen["remoteok:1"], "source id is persisted");
+    assert.ok(
+      Object.keys(store.seen).some((key) => key.startsWith("dedupe:acme|")),
+      "source-independent dedupe key is persisted",
+    );
+
+    // After the 30-day TTL the role may appear again.
+    const afterTtl = await collectStartups(
+      {},
+      {
+        profile,
+        runId: "run-third",
+        storePath,
+        now: () => new Date(Date.now() + 31 * 86_400_000),
+      },
+      remotive,
+    );
+    assert.equal(afterTtl.length, 1);
+    assert.equal(afterTtl[0]?.id, "remotive:1");
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });

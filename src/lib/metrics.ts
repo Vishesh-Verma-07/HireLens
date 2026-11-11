@@ -35,6 +35,8 @@ export const SOURCE_METRICS = {
   collectionSourcesTotal: "collection.sources_total",
   /** Sources that failed in the whole run. */
   collectionSourcesFailed: "collection.sources_failed",
+  /** Records folded into another record by cross-source dedupe. */
+  collectionDuplicatesRemoved: "collection.duplicates_removed",
   /** Wall-clock duration of the whole collection, in milliseconds. */
   collectionDurationMs: "collection.duration_ms",
 } as const;
@@ -209,6 +211,7 @@ export function emitCollectionMetrics(
   runId: string,
   telemetry: SourceRunTelemetry[],
   durationMs: number,
+  duplicatesRemoved = 0,
 ): void {
   const tags: MetricTags = { run_id: runId };
   const jobsFound = telemetry.reduce((total, source) => total + source.jobsFound, 0);
@@ -217,5 +220,6 @@ export function emitCollectionMetrics(
   emitMetric(SOURCE_METRICS.collectionJobsFound, jobsFound, tags);
   emitMetric(SOURCE_METRICS.collectionSourcesTotal, telemetry.length, tags);
   emitMetric(SOURCE_METRICS.collectionSourcesFailed, failed, tags);
+  emitMetric(SOURCE_METRICS.collectionDuplicatesRemoved, duplicatesRemoved, tags);
   emitMetric(SOURCE_METRICS.collectionDurationMs, durationMs, tags);
 }

@@ -16,6 +16,7 @@ source call in `src/sources/index.ts`, so a new source gets metrics for free.
 | `collection.jobs_found` | jobs collected by the whole run | `run_id` | `sum` |
 | `collection.sources_total` | sources attempted | `run_id` | `avg` |
 | `collection.sources_failed` | sources that failed | `run_id` | `sum` |
+| `collection.duplicates_removed` | records folded into another by dedupe | `run_id` | `sum` |
 | `collection.duration_ms` | wall-clock time of the whole run (ms) | `run_id` | `p95`, `max` |
 
 `error_type` is one of:

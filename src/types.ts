@@ -84,6 +84,12 @@ export interface Startup {
   employees?: string;
   batch?: string;
   source: SourceId;
+  /**
+   * Every source that contributed this record. Populated by cross-source
+   * deduplication; a single-source record has one entry. Kept optional so
+   * individual source modules can stay unaware of dedupe.
+   */
+  sources?: SourceId[];
   signals: Signal[];
   /** Normalized company domain, when the source provides one. */
   companyDomain?: string;

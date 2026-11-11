@@ -69,6 +69,11 @@ Scope is **matching only** — no email sending to founders.
   the list with senior or stale roles.
 - **Daily snapshot** — one run per day is cached in `data/snapshot-<date>.json`
   and reused, so the bot stays consistent and doesn't re-hit sources.
+- **Dedupe** — the same role from several boards is merged into one record
+  (`Startup.sources` lists every board that contributed), and `data/store.json`
+  suppresses ids seen in the last 30 days. Re-running collection the same day
+  returns nothing new; after 30 days a role may resurface. `npm run match:all`
+  bypasses both filters.
 - **No repeats** — the daily email only includes jobs that were *not* already
   emailed in the last ~10 days (reconstructed from the digest emails in the
   mailbox, so it survives GitHub Actions' ephemeral filesystem), and no single
@@ -319,9 +324,10 @@ src/
   sources/google.ts     # Google results API → ATS Startups
   scan/                 # Google-only query compiler + `npm run scan`
   match/score.ts        # deterministic, explainable fit score
-  match/rank.ts         # dedupe across sources, then sort
+  match/rank.ts         # company-level merge, freshness gate, then sort
   match/llm.ts          # optional LLM re-rank
-  store/db.ts           # seen-store for the CLI's "new only"
+  lib/dedupe.ts         # cross-source role matching + stable dedupe keys
+  store/db.ts           # seen-store for cross-run dedupe (30-day TTL)
   report/digest.ts      # Markdown / text / HTML renderers
   channels/email/       # config, mailer (SMTP+IMAP), bot loop
   lib/metrics.ts        # per-source health metrics (Vercel Custom Metrics + JSON logs)
@@ -344,6 +350,8 @@ on the next run — there is no `index.ts` import to add. Helpers (no `sourceId`
 and `*.test.ts` files are ignored. Add the id to the `SourceId` union in
 `src/types.ts`, and tune it in `config/sources.yaml` if it needs non-default
 settings. The header of `src/sources/registry.ts` has a copy-paste template.
+Cross-source dedupe and `sources` attribution happen in `collectStartups`, so a
+source only has to emit its own source-prefixed ids.
 
 Every source also gets a test. Record its fixture once, then copy the template
 from `test/fixtures/README.md` into `src/sources/<source>.test.ts`:

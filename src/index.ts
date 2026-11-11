@@ -46,6 +46,9 @@ async function main(): Promise<void> {
   const startups = await collectStartups(sourceConfig, {
     only: args.sources,
     profile,
+    // `--all` bypasses cross-run dedupe on purpose, so the same roles can be
+    // inspected again across runs.
+    storePath: args.showAll ? undefined : storePath,
   });
   logger.info(`Collected ${startups.length} raw startup records`);
 
@@ -66,8 +69,10 @@ async function main(): Promise<void> {
   void syncMatchesToHub(root, ranked);
 
   const store = loadStore(storePath);
-  const fresh = args.showAll ? ranked : ranked.filter((m) => !store.seen[m.startup.id]);
-  const top = fresh.slice(0, args.limit);
+  // Collection already removed roles seen in the last 30 days; this store
+  // update keeps `--all` runs (which bypass that filter) from resurfacing the
+  // showcased jobs on the next normal run.
+  const top = ranked.slice(0, args.limit);
 
   const digest = renderDigest(profile, top, { showAll: args.showAll });
   console.log(`\n${digest}`);
@@ -83,7 +88,7 @@ async function main(): Promise<void> {
     logger.info(`Wrote ${outPath} and updated ${storePath}`);
   }
 
-  logger.info(`${fresh.length} new matches; showing top ${top.length}`);
+  logger.info(`${ranked.length} matches this run; showing top ${top.length}`);
 }
 
 main().catch((err) => {

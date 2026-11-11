@@ -100,7 +100,11 @@ export function addExclusion(root: string, name: string): void {
 
 async function runMatcher(root: string, profile: Profile): Promise<Match[]> {
   const sourceConfig = loadSourceConfig(resolve(root, "config", "sources.yaml"));
-  const startups = await collectStartups(sourceConfig, { profile });
+  const startups = await collectStartups(sourceConfig, {
+    profile,
+    // Persist seen ids so a role collected yesterday is not re-surfaced today.
+    storePath: resolve(dataDir(root), "store.json"),
+  });
   logger.info(`Collected ${startups.length} raw startup records`);
   const ranked = rankStartups(startups, profile);
 
