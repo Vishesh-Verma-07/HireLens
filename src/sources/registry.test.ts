@@ -63,6 +63,7 @@ test("discovers every built-in source without editing index.ts", async () => {
       "remotive",
       "unstop",
       "wellfound",
+      "workatastartup",
       "yc",
     ],
   );

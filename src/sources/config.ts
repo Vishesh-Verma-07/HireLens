@@ -22,6 +22,7 @@ import type { RemoteOkConfig } from "./remoteok.js";
 import type { RemotiveConfig } from "./remotive.js";
 import type { BaseSourceConfig } from "./types.js";
 import type { UnstopConfig } from "./unstop.js";
+import type { WorkAtAStartupConfig } from "./workatastartup.js";
 import type { YcConfig } from "./yc.js";
 
 /** Fields every source block accepts. */
@@ -57,7 +58,7 @@ export interface OttaConfig extends LimitedSourceConfig {
   location?: string;
 }
 
-export type WorkAtAStartupConfig = LimitedSourceConfig;
+export type { WorkAtAStartupConfig };
 
 export interface HimalayasConfig extends LimitedSourceConfig {
   remoteOnly?: boolean;
