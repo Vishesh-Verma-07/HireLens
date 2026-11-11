@@ -324,6 +324,7 @@ src/
   store/db.ts           # seen-store for the CLI's "new only"
   report/digest.ts      # Markdown / text / HTML renderers
   channels/email/       # config, mailer (SMTP+IMAP), bot loop
+  lib/metrics.ts        # per-source health metrics (Vercel Custom Metrics + JSON logs)
 test/
   fixtures/             # one recorded API response per source (+ README)
   fixtures.ts           # load/replay a fixture by swapping globalThis.fetch
@@ -332,6 +333,7 @@ scripts/record-fixture.ts # `npm run record:fixture <source>`
 config/sources.yaml     # which sources, which feeds, YC options
 profile/profile.yaml    # YOUR profile  ← the "for me only" file
 .env.example            # mail + Google search credentials template
+docs/observability.md   # metric catalog, dashboards, alerting
 ```
 
 ### Adding a source
@@ -355,6 +357,18 @@ The test replays the fixture through the real fetch function and calls
 `assertValidStartups(startups, "newboard")`, which enforces the
 `{source}:{id}` id format, non-empty signals, valid `SignalType`s, and ISO dates.
 That is usually a 2-minute loop for a new source.
+
+### Source health metrics
+
+Every collection run emits `source.jobs_found`, `source.duration_ms`,
+`source.success`, `source.failure`, and `source.rate_limited` for each source,
+tagged with `source_id`, `run_id`, and `error_type`. Wrapping happens in
+`collectStartups`, so a new source is instrumented automatically — no source
+code changes. Samples go to Vercel Custom Metrics through `@vercel/functions`
+(a no-op outside Vercel); set `METRICS_LOG=1` to also emit one JSON line per
+sample for a log-based dashboard on Render or Docker. See
+[`docs/observability.md`](docs/observability.md) for the metric catalog,
+dashboard queries, and a two-consecutive-failures alert example.
 
 ## 8. Going multi-user later
 
