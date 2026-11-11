@@ -20,6 +20,9 @@ npm run record:fixture remoteok
 # Big feeds: keep only the first N top-level array items
 npm run record:fixture remoteok -- --trim 25
 
+# Big sitemaps: keep only the last N job URLs (the source sees the same slice)
+npm run record:fixture otta -- --trim-sitemap 16
+
 # Point at a different config/profile when experimenting
 npm run record:fixture yc -- --config config/sources.yaml --profile profile/profile.yaml
 ```
@@ -57,6 +60,9 @@ and fix the source.
 - `body` is parsed JSON when the response was JSON, otherwise the raw text.
 - `--trim` only shortens top-level arrays; the shape stays exactly as the API
   returned it.
+- `--trim-sitemap` rewrites a sitemap response to its last N job `<url>`
+  entries before the source parses it, so a recording only resolves the ids it
+  saves.
 
 ## Use it in a test
 

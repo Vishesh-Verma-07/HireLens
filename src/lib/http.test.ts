@@ -215,6 +215,38 @@ test("an open circuit breaker stops retries without more network calls", async (
   }
 });
 
+test("fetchText sends a method and body for POST requests", async () => {
+  let init: RequestInit | undefined;
+
+  const restore = installFetch(((input: string | URL | Request, options?: RequestInit) => {
+    init = options;
+    return Promise.resolve(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+  }) as typeof fetch);
+
+  try {
+    const body = await fetchText("https://example.test/graphql", {
+      method: "POST",
+      body: '{"query":"{ ping }"}',
+      headers: { "content-type": "application/json" },
+    });
+
+    assert.equal(body, '{"ok":true}');
+    assert.equal(init?.method, "POST");
+    assert.equal(init?.body, '{"query":"{ ping }"}');
+    assert.equal(
+      (init?.headers as Record<string, string>)["content-type"],
+      "application/json",
+    );
+  } finally {
+    restore();
+  }
+});
+
 test("fetchJson parses JSON and requests it via the accept header", async () => {
   let headers: Record<string, string> = {};
 

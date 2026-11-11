@@ -17,6 +17,7 @@ import type { FundingConfig } from "./funding.js";
 import type { GoogleSourceConfig } from "./google.js";
 import type { HnConfig } from "./hn.js";
 import type { InternshalaConfig } from "./internshala.js";
+import type { OttaConfig } from "./otta.js";
 import type { ProductHuntConfig } from "./producthunt.js";
 import type { RemoteOkConfig } from "./remoteok.js";
 import type { RemotiveConfig } from "./remotive.js";
@@ -52,11 +53,7 @@ export interface WellfoundConfig extends LimitedSourceConfig {
   categories?: string[];
 }
 
-export interface OttaConfig extends LimitedSourceConfig {
-  /** Optional minimum-salary filter. */
-  salaryMin?: number;
-  location?: string;
-}
+export type { OttaConfig };
 
 export type { WorkAtAStartupConfig };
 
@@ -159,11 +156,11 @@ export const SOURCE_DEFAULTS: Partial<Record<SourceId, SourceSettings>> = {
   ashby: { limit: 50, companies: [] },
 };
 
-const POSITIVE_INTEGER_KEYS = new Set(["limit", "pages", "enrichLimit", "siteQueries", "jobsLimit"]);
+const POSITIVE_INTEGER_KEYS = new Set(["limit", "pages", "enrichLimit", "siteQueries", "jobsLimit", "scanLimit"]);
 const NON_NEGATIVE_NUMBER_KEYS = new Set(["salaryMin"]);
 const STRING_ARRAY_KEYS = new Set(["feeds", "companies", "categories", "roles"]);
 const BOOLEAN_KEYS = new Set(["remoteOnly", "enrich", "jobs", "variants", "sponsored", "hiringOnly"]);
-const URL_KEYS = new Set(["feedUrl", "searchUrl", "url"]);
+const URL_KEYS = new Set(["feedUrl", "searchUrl", "url", "sitemapUrl"]);
 
 function isPositiveInteger(value: unknown): value is number {
   return typeof value === "number" && Number.isInteger(value) && value > 0;

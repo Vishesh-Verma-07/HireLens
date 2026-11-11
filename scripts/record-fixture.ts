@@ -38,12 +38,15 @@ interface Options {
   profilePath: string;
   /** Keep at most this many top-level array items per response. */
   trim?: number;
+  /** Keep only the last N job URLs in a sitemap response. */
+  trimSitemap?: number;
 }
 
 const USAGE = `Usage: npm run record:fixture <source> [options]
 
 Options:
   --trim <n>      Keep at most n top-level array items per response (for big feeds)
+  --trim-sitemap <n>  Keep only the last n job URLs in a sitemap response
   --config <path> Sources config (default: config/sources.yaml)
   --profile <path> Profile used as source context (default: profile/profile.yaml)
   --help          Show this message`;
@@ -53,6 +56,7 @@ function parseArgs(argv: string[], root: string): Options {
   let configPath = resolve(root, "config/sources.yaml");
   let profilePath = resolve(root, "profile/profile.yaml");
   let trim: number | undefined;
+  let trimSitemap: number | undefined;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -74,6 +78,17 @@ function parseArgs(argv: string[], root: string): Options {
       continue;
     }
 
+    if (arg === "--trim-sitemap") {
+      const raw = argv[index + 1];
+      const value = Number(raw);
+      if (!raw || !Number.isInteger(value) || value <= 0) {
+        throw new Error("--trim-sitemap needs a positive integer");
+      }
+      trimSitemap = value;
+      index += 1;
+      continue;
+    }
+
     if (arg === "--config" || arg === "--profile") {
       const raw = argv[index + 1];
       if (!raw) throw new Error(`${arg} needs a path`);
@@ -90,7 +105,7 @@ function parseArgs(argv: string[], root: string): Options {
   }
 
   if (!sourceId) throw new Error("missing source id");
-  return { sourceId, configPath, profilePath, trim };
+  return { sourceId, configPath, profilePath, trim, trimSitemap };
 }
 
 function requestUrl(input: Parameters<typeof fetch>[0]): string {
@@ -124,6 +139,24 @@ function trimResponse(response: FixtureResponse, limit: number | undefined): Fix
     ...response,
     body: response.body.slice(0, limit),
   };
+}
+
+/**
+ * Keeps only the last `limit` job entries of a sitemap `<urlset>`.
+ *
+ * Sitemaps are large and mix job and company URLs. Trimming before the source
+ * sees the response means a recording only resolves the ids that end up in the
+ * fixture, instead of requesting (and storing) hundreds of unseen jobs.
+ */
+function trimSitemapXml(xml: string, limit: number): string {
+  if (!xml.includes("<urlset")) return xml;
+
+  const blocks = xml.match(/<url>[\s\S]*?<\/url>/g) ?? [];
+  const jobs = blocks.filter((block) => /<loc>[^<]*\/jobs\//.test(block));
+  if (jobs.length === 0) return xml;
+
+  const head = xml.match(/^[\s\S]*?<urlset[^>]*>/)?.[0] ?? "";
+  return `${head}\n${jobs.slice(-limit).join("\n")}\n</urlset>\n`;
 }
 
 async function main(): Promise<void> {
@@ -163,6 +196,10 @@ async function main(): Promise<void> {
 
     const contentType = response.headers.get("content-type") ?? "";
     const text = await response.clone().text();
+    const body =
+      options.trimSitemap !== undefined
+        ? trimSitemapXml(text, options.trimSitemap)
+        : text;
     const headers: Record<string, string> = {};
     if (contentType) headers["content-type"] = contentType;
 
@@ -170,10 +207,11 @@ async function main(): Promise<void> {
       url,
       status: response.status,
       headers,
-      body: captureBody(text, contentType),
+      body: captureBody(body, contentType),
     });
 
-    return response;
+    if (body === text) return response;
+    return new Response(body, { status: response.status, headers: response.headers });
   }) as typeof fetch;
 
   let startups: Startup[];
@@ -204,9 +242,13 @@ async function main(): Promise<void> {
     options.trim === undefined
       ? ""
       : ` (trimmed to ${options.trim} array item(s) per response)`;
+  const sitemapNote =
+    options.trimSitemap === undefined
+      ? ""
+      : ` (kept the last ${options.trimSitemap} sitemap job url(s))`;
   logger.info(
     `record:fixture: wrote ${captured.length} response(s) from ${requestCount} request(s) ` +
-      `to ${path} — ${(Buffer.byteLength(json) / 1024).toFixed(1)} KB${trimNote}`,
+      `to ${path} — ${(Buffer.byteLength(json) / 1024).toFixed(1)} KB${trimNote}${sitemapNote}`,
   );
   logger.info(`record:fixture: source returned ${startups.length} startup(s)`);
 
