@@ -36,6 +36,10 @@ export interface FetchOptions {
   timeoutMs?: number;
   retries?: number;
   headers?: Record<string, string>;
+  /** HTTP method. Defaults to GET. */
+  method?: string;
+  /** Request body, sent verbatim. Callers set their own `content-type`. */
+  body?: string;
   /** Token bucket consulted before every network attempt. */
   rateLimiter?: RateLimiter;
   /** Breaker wrapped around every network attempt, so open state fails fast. */
@@ -71,6 +75,8 @@ async function requestOnce(url: string, opts: FetchOptions): Promise<string> {
 
   try {
     const res = await fetch(url, {
+      method: opts.method,
+      body: opts.body,
       signal: ctrl.signal,
       headers: { "user-agent": USER_AGENT, accept: "*/*", ...headers },
     });

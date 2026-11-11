@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import test from "node:test";
-import { collectStartups } from "./index.js";
+import { collectStartups, loadSourceConfig } from "./index.js";
 import {
   discoverSources,
   planSources,
@@ -58,6 +58,7 @@ test("discovers every built-in source without editing index.ts", async () => {
       "google",
       "hn",
       "internshala",
+      "otta",
       "producthunt",
       "remoteok",
       "remotive",
@@ -71,6 +72,23 @@ test("discovers every built-in source without editing index.ts", async () => {
   for (const source of sources) {
     assert.equal(typeof source.fetch, "function", `${source.id} must expose fetch`);
   }
+});
+
+test("config/sources.yaml enables otta in a real collection plan", async () => {
+  const config = loadSourceConfig(
+    resolve(import.meta.dirname, "../../config/sources.yaml"),
+  );
+  const sources = await discoverSources();
+  const plan = planSources(config, sources);
+
+  assert.ok(
+    plan.run.some((entry) => entry.source.id === "otta"),
+    "sources.yaml has otta enabled, so the plan must include it",
+  );
+  assert.ok(
+    !plan.warnings.some((warning) => warning.includes('"otta"')),
+    "otta is implemented, so it must not warn",
+  );
 });
 
 test("auto-discovers a dropped-in module and ignores helpers/tests", async () => {

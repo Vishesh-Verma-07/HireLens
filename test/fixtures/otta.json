@@ -1,0 +1,2412 @@
+{
+  "source": "otta",
+  "recordedAt": "2026-11-11T14:31:36.341Z",
+  "responses": [
+    {
+      "url": "https://api.otta.com/static/sitemaps/sitemap-00001.xml",
+      "status": 200,
+      "headers": {
+        "content-type": "text/xml"
+      },
+      "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\" xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n<url>\n  <loc>https://app.otta.com/jobs/GnGUXHr2</loc>\n  <lastmod>2026-11-10T16:34:11Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/frec2-mQ</loc>\n  <lastmod>2026-11-10T17:43:09Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/-t7_FBQc</loc>\n  <lastmod>2026-11-10T17:43:09Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/llvUhD1e</loc>\n  <lastmod>2026-11-10T17:45:10Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/h8M39DpF</loc>\n  <lastmod>2026-11-10T15:12:41Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/c79PWExr</loc>\n  <lastmod>2026-11-10T15:14:18Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/nSmVHdUU</loc>\n  <lastmod>2026-11-10T16:34:09Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/8RZddfjG</loc>\n  <lastmod>2026-11-10T16:34:50Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/I1td2xXd</loc>\n  <lastmod>2026-11-10T16:22:57Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/bzBHd2Yv</loc>\n  <lastmod>2026-11-10T16:22:46Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/Pkz7N3Jz</loc>\n  <lastmod>2026-11-10T16:27:39Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/to42tYKb</loc>\n  <lastmod>2026-11-10T14:46:53Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/m74QUn3M</loc>\n  <lastmod>2026-11-10T15:52:34Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/yw8rHpQY</loc>\n  <lastmod>2026-11-10T15:52:34Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/u058qDdZ</loc>\n  <lastmod>2026-11-10T16:27:01Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n<url>\n  <loc>https://app.otta.com/jobs/NX9l9Amu</loc>\n  <lastmod>2026-11-10T16:26:27Z</lastmod>\n  <changefreq>daily</changefreq>\n</url>\n</urlset>\n"
+    },
+    {
+      "url": "https://api.otta.com/graphql?batch=0",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "job0": {
+            "company": {
+              "domainName": "granola.ai",
+              "mission": "To build tools that help humans think better.",
+              "name": "Granola",
+              "numberEmployees": 50,
+              "shortDescription": "The AI notepad for people in back-to-back meetings",
+              "size": {
+                "value": "21-100"
+              },
+              "urlSafeName": "Granola"
+            },
+            "externalId": "GnGUXHr2",
+            "firstLiveAt": "2025-08-13T15:57:36",
+            "formattedLocationPreferences": [
+              {
+                "name": "London"
+              }
+            ],
+            "function": {
+              "value": "Software Engineering"
+            },
+            "insertedAt": "2025-08-13T12:43:51",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "We're looking for an Product Engineer focussed on the Backend to help us scale our systems to unlock Granola for the next 100x users"
+              },
+              {
+                "order": 1,
+                "value": "In this role, you will deep dive into scaling challenges, build secure and reliable infrastructure, and develop robust backend solutions that power exciting new features"
+              },
+              {
+                "order": 2,
+                "value": "Own the evolution and scaling of our backend infrastructure"
+              },
+              {
+                "order": 3,
+                "value": "Design and implement performant APIs and services"
+              },
+              {
+                "order": 4,
+                "value": "Build infrastructure to support cutting-edge AI capabilities"
+              },
+              {
+                "order": 5,
+                "value": "Optimise database performance and query efficiency"
+              },
+              {
+                "order": 6,
+                "value": "Continuously improve reliability and observability through enhanced monitoring and alerting"
+              },
+              {
+                "order": 7,
+                "value": "Collaborate cross-functionally to ensure our infrastructure supports continuous product innovation"
+              }
+            ],
+            "live": true,
+            "officeLocation": "Old Street, London ",
+            "originalUrl": "https://jobs.ashbyhq.com/granola/f928eaec-2215-4811-9593-eb084eddef6c?utm_source=ZaGQd7jyEG",
+            "otherCompensationInformation": "+ Equity",
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "Engineering experience in tech and product-driven environments"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "Strong proficiency in TypeScript and Node.js"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Hands-on experience with cloud infrastructure and infrastructure as code (we build on AWS using Terraform)"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Deep knowledge of relational databases (we use PostgreSQL)"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Familiarity with serverless architectures (we love lambdas!)"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Solid understanding of security best practices and performance optimisation"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Are first and foremost a builder"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Are excited to work in-person from our office in London (most of the time)"
+              },
+              {
+                "desirable": false,
+                "order": 8,
+                "value": "Love working in a startup environment (you either have experience working in a startup or are really drawn to the zero-to-one phase)"
+              },
+              {
+                "desirable": false,
+                "order": 9,
+                "value": "Value working with people who are kind, ambitious, and pragmatic"
+              },
+              {
+                "desirable": false,
+                "order": 10,
+                "value": "Have an interest in infrastructure for AI/ML (direct experience is a bonus, but not required)"
+              },
+              {
+                "desirable": false,
+                "order": 11,
+                "value": "Thrive in a fast-paced environment with evolving requirements and shifting priorities"
+              }
+            ],
+            "salaryRange": null,
+            "scrapedLocation": "Old Street, London, United Kingdom",
+            "subFunction": {
+              "value": "Backend Engineer"
+            },
+            "team": null,
+            "technologiesUsed": [
+              {
+                "value": "AWS"
+              },
+              {
+                "value": "TypeScript"
+              },
+              {
+                "value": "Node.js"
+              },
+              {
+                "value": "Postgres"
+              },
+              {
+                "value": "Terraform"
+              }
+            ],
+            "title": "Product Engineer"
+          },
+          "job1": {
+            "company": {
+              "domainName": "withampersand.com",
+              "mission": "To usher in a future where data can flow freely between SaaS applications, where a new product \"just works\" with a company's existing SaaS stack.",
+              "name": "Ampersand",
+              "numberEmployees": 15,
+              "shortDescription": "User-facing integrations for SaaS products",
+              "size": {
+                "value": "1-20"
+              },
+              "urlSafeName": "Ampersand"
+            },
+            "externalId": "frec2-mQ",
+            "firstLiveAt": "2026-07-08T09:08:43",
+            "formattedLocationPreferences": [
+              {
+                "name": "San Francisco Bay Area"
+              }
+            ],
+            "function": {
+              "value": "Software Engineering"
+            },
+            "insertedAt": "2026-06-19T01:20:04",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "We're hiring a Forward Deployed Engineer to work directly inside customer environments, implementing and extending Ampersand in a way that makes each deployment succeed and teaches us something we can build on"
+              },
+              {
+                "order": 1,
+                "value": "This role is part engineer, part technical advisor, part trusted partner"
+              },
+              {
+                "order": 2,
+                "value": "You'll work closely with strategic customers from kickoff through delivery, write production code when the work calls for it, and bring what you learn back to the core product and engineering team. If you enjoy working on challenges where no two implementations look the same, this could be a good role for you"
+              },
+              {
+                "order": 3,
+                "value": "Customer Deployments — Lead end-to-end technical implementations with strategic customers, from discovery through successful adoption"
+              },
+              {
+                "order": 4,
+                "value": "Technical Recommendations — Understand each customer's stack, integration goals, data model, and constraints — then advise on approaches that are maintainable, scalable, and easy for their team to operate long-term"
+              },
+              {
+                "order": 5,
+                "value": "Production Code — Write production-quality code inside customer codebases when the work calls for it. You're comfortable in unfamiliar environments and hold a high bar for what you ship"
+              },
+              {
+                "order": 6,
+                "value": "Engineering Partnership — Partner with the core engineering team to surface product gaps, bugs, and recurring implementation patterns from the field"
+              },
+              {
+                "order": 7,
+                "value": "Knowledge Sharing — Turn customer-specific learnings into reusable improvements: docs, examples, playbooks, and direct product contributions"
+              },
+              {
+                "order": 8,
+                "value": "Customer Partnership — Provide white-glove support and serve as a genuine thought partner to customer engineering and product teams — not just a vendor contact"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://jobs.ashbyhq.com/Ampersand/ffa4a2b4-7b64-4b82-9e46-edb45144fca2?utm_source=Otta",
+            "otherCompensationInformation": "+ Equity",
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "4+ years of software engineering, solutions engineering, or customer-facing technical experience"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "Strong development fundamentals — you write production-quality code and are comfortable inside unfamiliar codebases"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Direct experience working with customers to solve technical problems and deliver outcomes"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Solid understanding of APIs, integrations, distributed systems, or cloud-based architectures"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Clear communicator with both technical and non-technical stakeholders"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "You take responsibility for outcomes from discovery through delivery — not just your slice of the work"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Experience with developer tools, infrastructure platforms, enterprise software, or AI-native products is a strong plus"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Familiarity with CRM, ERP, fintech, or other business systems is a bonus"
+              }
+            ],
+            "salaryRange": {
+              "currency": "USD",
+              "maxAmount": "205000",
+              "minAmount": "89000"
+            },
+            "scrapedLocation": "San Francisco, CA, USA {{REMOTE}}",
+            "subFunction": {
+              "value": "Sales & Solutions Engineer"
+            },
+            "team": null,
+            "technologiesUsed": [],
+            "title": "Forward Deployed Engineer"
+          },
+          "job2": {
+            "company": {
+              "domainName": "withampersand.com",
+              "mission": "To usher in a future where data can flow freely between SaaS applications, where a new product \"just works\" with a company's existing SaaS stack.",
+              "name": "Ampersand",
+              "numberEmployees": 15,
+              "shortDescription": "User-facing integrations for SaaS products",
+              "size": {
+                "value": "1-20"
+              },
+              "urlSafeName": "Ampersand"
+            },
+            "externalId": "-t7_FBQc",
+            "firstLiveAt": "2026-06-23T13:16:23",
+            "formattedLocationPreferences": [
+              {
+                "name": "San Francisco Bay Area"
+              }
+            ],
+            "function": {
+              "value": "Software Engineering"
+            },
+            "insertedAt": "2026-06-19T01:20:04",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "We're looking for a Founding Engineering Manager to join a fast-growing AI infrastructure company at a pivotal moment. You'll work directly with the founders and a small, high-retention engineering team, including people who came up through Google, Meta, Cruise, and AWS and have chosen to stay"
+              },
+              {
+                "order": 1,
+                "value": "The culture here is intentional: high craft, high trust, and high ownership. Your job is to protect that while scaling it"
+              },
+              {
+                "order": 2,
+                "value": "This is a hands-on role. You'll be close to the technical work, close to the people doing it, and close to the decisions that shape how the team grows"
+              },
+              {
+                "order": 3,
+                "value": "Engineering Leadership — Mentor and grow a high-performing team across full-stack, customer, and forward-deployed engineering. Run regular 1:1s, give clear feedback, and build the conditions where engineers do their best work and stay"
+              },
+              {
+                "order": 4,
+                "value": "Team Scaling — Own onboarding for new engineers so they ramp quickly and become productive. Partner with founders on hiring and career development as the org grows beyond its founding core"
+              },
+              {
+                "order": 5,
+                "value": "Technical Execution — Spend approximately 20% of your time doing IC work — staying close to the codebase and tooling. Drive project management for customer deliverables, especially work that spans multiple engineers or product areas"
+              },
+              {
+                "order": 6,
+                "value": "Engineering Culture — Create the conditions for engineers to ship fast: code maintainability, internal documentation, development workflows, QA tools and automation. Lead by example on AI-accelerated development — advocate for using AI to improve velocity while maintaining reliability and quality"
+              },
+              {
+                "order": 7,
+                "value": "Security & Compliance — Own security and compliance alongside our Founding Operations Lead, including SOC 2 Type 2, ISO 27001, HIPAA, and GDPR"
+              },
+              {
+                "order": 8,
+                "value": "Distributed Collaboration — Manage project-based contract engineers and globally distributed connector contributors"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://jobs.ashbyhq.com/Ampersand/80b2b99c-089f-48ce-840f-5fd6e5bb0896?utm_source=Otta",
+            "otherCompensationInformation": "Offers Equity",
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "Significant software engineering experience, including 2+ years leading engineering teams in a startup or high-growth environment (even if you didn’t hold a formal Manager title)"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "You've led teams through complex technical initiatives and are excited to do it again"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Strong technical judgment — you can go deep on architecture and system design when it matters"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "You build engineering culture, not just org charts: Ownership, craft, and accountability are things you've actually installed somewhere before"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Excellent written communication; the team is async-first and decisions travel in writing"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Experience with Go, TypeScript, React, or similar stacks is a plus"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Background in developer tools, APIs, infrastructure platforms, or AI-native products is preferred"
+              }
+            ],
+            "salaryRange": {
+              "currency": "USD",
+              "maxAmount": "310000",
+              "minAmount": "205000"
+            },
+            "scrapedLocation": "San Francisco, CA, USA {{REMOTE}}",
+            "subFunction": {
+              "value": "Engineering Management"
+            },
+            "team": null,
+            "technologiesUsed": [
+              {
+                "value": "React"
+              },
+              {
+                "value": "TypeScript"
+              },
+              {
+                "value": "Go"
+              }
+            ],
+            "title": "Engineering Manager"
+          },
+          "job3": {
+            "company": {
+              "domainName": "doppel.com",
+              "mission": "To protect the world from social engineering attacks every day.",
+              "name": "Doppel",
+              "numberEmployees": 298,
+              "shortDescription": "Social engineering defense platform",
+              "size": {
+                "value": "201-500"
+              },
+              "urlSafeName": "Doppel"
+            },
+            "externalId": "llvUhD1e",
+            "firstLiveAt": "2026-07-14T11:26:04",
+            "formattedLocationPreferences": [
+              {
+                "name": "Remote from US"
+              }
+            ],
+            "function": {
+              "value": "Software Engineering"
+            },
+            "insertedAt": "2026-07-08T01:26:39",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "We're building the AI-native social engineering defense platform"
+              },
+              {
+                "order": 1,
+                "value": "This means we're designing scalable systems that monitor billions of domains, social media accounts, apps, dark web forums, etc., and leverage AI agents to identify and neutralize digital threats"
+              },
+              {
+                "order": 2,
+                "value": "We're looking for technically strong, product-minded engineers who enjoy working directly with customers to solve complex problems and rapidly build solutions that become part of the Doppel platform"
+              },
+              {
+                "order": 3,
+                "value": "Build customer-facing applications, workflows, and product capabilities that solve real enterprise problems"
+              },
+              {
+                "order": 4,
+                "value": "Develop AI-powered automations and integrations for customers and internal teams"
+              },
+              {
+                "order": 5,
+                "value": "Prototype and ship end-to-end solutions that can evolve into core product functionality"
+              },
+              {
+                "order": 6,
+                "value": "Partner directly with enterprise customers to understand requirements and drive successful deployments"
+              },
+              {
+                "order": 7,
+                "value": "Build and maintain integrations with APIs, webhooks, identity providers, SIEM/SOAR platforms, and other enterprise systems"
+              },
+              {
+                "order": 8,
+                "value": "Troubleshoot authentication and enterprise integration issues (OAuth, SAML, SCIM, etc.)"
+              },
+              {
+                "order": 9,
+                "value": "Own multiple customer projects simultaneously, coordinating across engineering, product, and customer-facing teams"
+              },
+              {
+                "order": 10,
+                "value": "Translate customer feedback into scalable product improvements"
+              },
+              {
+                "order": 11,
+                "value": "Build internal tooling that accelerates onboarding, deployment, and operational workflows"
+              },
+              {
+                "order": 12,
+                "value": "Create and maintain documentation, dashboards, and best practices for customer deployments and integrations"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://jobs.ashbyhq.com/Doppel/bae7bcc9-afff-4f50-91e4-2c8d3580cd23?utm_source=Otta",
+            "otherCompensationInformation": null,
+            "remoteOnly": true,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "The ideal candidate combines strong software engineering skills with customer empathy, product intuition, and the ability to execute independently in ambiguous environments"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "Strong software engineering background with experience building production applications (Python preferred)"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Familiarity with AI application development, LLM APIs, or workflow automation is a strong plus"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Comfortable working directly with enterprise and non technical customers to solve technical problems"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Strong understanding of enterprise authentication and integrations (OAuth, SAML, SCIM, webhooks, REST APIs)"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Proven ability to manage multiple projects and stakeholders simultaneously"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Excellent communication and organizational skills, with the ability to bridge technical and non-technical teams"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Product-minded, highly autonomous, and comfortable working in a fast-paced startup environment"
+              }
+            ],
+            "salaryRange": {
+              "currency": "USD",
+              "maxAmount": "220000",
+              "minAmount": "120000"
+            },
+            "scrapedLocation": "United States {{REMOTE}}",
+            "subFunction": {
+              "value": "Sales & Solutions Engineer"
+            },
+            "team": null,
+            "technologiesUsed": [
+              {
+                "value": "Python"
+              },
+              {
+                "value": "REST API"
+              }
+            ],
+            "title": "Forward Deployed Engineer"
+          },
+          "job4": {
+            "company": {
+              "domainName": "mimecast.com",
+              "mission": "To stop bad things from happening to good organisations.",
+              "name": "Mimecast",
+              "numberEmployees": 2396,
+              "shortDescription": "HR management & advanced email security",
+              "size": {
+                "value": "1001+"
+              },
+              "urlSafeName": "Mimecast"
+            },
+            "externalId": "h8M39DpF",
+            "firstLiveAt": "2026-06-03T13:02:23",
+            "formattedLocationPreferences": [
+              {
+                "name": "London"
+              }
+            ],
+            "function": {
+              "value": "Sales & Account Management"
+            },
+            "insertedAt": "2026-05-28T18:06:28",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "We’re looking for an exceptional Account Manager to oversee a portfolio of ~50 customers (1000–3000 employees), focusing on upselling new and existing products"
+              },
+              {
+                "order": 1,
+                "value": "As the main point of contact for these accounts, you’ll be their trusted advisor, guiding them through Mimecast’s cutting-edge technology stack and helping them tackle today’s cybersecurity challenges"
+              },
+              {
+                "order": 2,
+                "value": "Achieve and exceed monthly/quarterly/annual upsell revenue targets"
+              },
+              {
+                "order": 3,
+                "value": "Prevent churn and mitigate downsell within your assigned accounts"
+              },
+              {
+                "order": 4,
+                "value": "Partner with the Channel Development Team to create and execute impactful account plans"
+              },
+              {
+                "order": 5,
+                "value": "Drive incremental revenue by selling new technology into existing customers"
+              },
+              {
+                "order": 6,
+                "value": "Follow a proven end-to-end sales methodology to close deals efficiently"
+              },
+              {
+                "order": 7,
+                "value": "Continuously develop your skills through training and knowledge-building sessions"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://mimecast.wd5.myworkdayjobs.com/en-US/Mimecast-Careers/job/Great-Britain---London/Mid-Enterprise-Account-Manager_R6446-1?source=Otta&utm_source=Otta",
+            "otherCompensationInformation": null,
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "We’re looking for a driven, dynamic, and results-oriented professional with:"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Proven IT or SaaS sales experience (3+ years)"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "A proven track record of meeting and exceeding revenue quotas"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Experience working with corporate IT teams and selling through Channel partners"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Familiarity with Salesforce CRM and the ability to manage customer relationships effectively"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Strong communication skills, a positive outlook, and a “can-do” attitude"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Knowledge or experience in cybersecurity, email/messaging, or enterprise IT is a huge plus!"
+              }
+            ],
+            "salaryRange": null,
+            "scrapedLocation": "GBR - London, United Kingdom",
+            "subFunction": {
+              "value": "Customer Success & Account Management"
+            },
+            "team": null,
+            "technologiesUsed": [
+              {
+                "value": "Salesforce"
+              }
+            ],
+            "title": "Mid-Enterprise Account Manager"
+          },
+          "job5": {
+            "company": {
+              "domainName": "roku.com",
+              "mission": "To provide its users with a more convenient and cost effective way of watching the programs they love.",
+              "name": "Roku",
+              "numberEmployees": 4450,
+              "shortDescription": "Convenient & affordable TV streaming players",
+              "size": {
+                "value": "1001+"
+              },
+              "urlSafeName": "Roku"
+            },
+            "externalId": "c79PWExr",
+            "firstLiveAt": "2026-01-21T12:58:10",
+            "formattedLocationPreferences": [
+              {
+                "name": "Cambridge"
+              }
+            ],
+            "function": {
+              "value": "Software Engineering"
+            },
+            "insertedAt": "2026-01-15T15:14:28",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "As a senior technical lead, you consider yourself a platform services developer and developing innovative solutions using modern software frameworks and paradigms"
+              },
+              {
+                "order": 1,
+                "value": "You are self-driven and problem solver, with a strong background in building large-scale software platform and applications"
+              },
+              {
+                "order": 2,
+                "value": "You are execution focused and would develop a reputation for repeatedly delivering projects on-time"
+              },
+              {
+                "order": 3,
+                "value": "Design, develop and deploy scalable web applications and services, being part of everything from contributing to web technology and framework stack, to use case and data model design"
+              },
+              {
+                "order": 4,
+                "value": "Drive architecture discussions, take ownership and responsibility over new projects, and deliver high quality software with tight timeline"
+              },
+              {
+                "order": 5,
+                "value": "Partner with security and compliance teams to ensure the application meets compliance, security and audit requirements"
+              },
+              {
+                "order": 6,
+                "value": "Participate in the continual improvement of engineering tools, cloud-based technologies/services, and process"
+              },
+              {
+                "order": 7,
+                "value": "Define and participate in Agile development process, including scoping, technical design, estimation effort, coding, testing, debugging, code reviews, maintenance and support"
+              },
+              {
+                "order": 8,
+                "value": "Collaborate with cross-function teams and demonstrate great communication skills"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://www.weareroku.com/jobs/7541329?gh_jid=7541329&utm_source=Otta",
+            "otherCompensationInformation": null,
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "5+ years of experience in delivery multi-tier, highly scalable, distributed web application"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "Deep understanding in software architecture, object-oriented design principles, and data structures"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Extensive experience in developing microservices using Java, Python"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Good experience in Test driven development and automating test cases using Java/ Python"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Experience in SQL / NoSQL (Oracle, Cassandra) database design"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Demonstrated ability to be proactive, self-driven, and make practical trade-offs based on business needs, entrepreneurial spirit"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Excellent verbal and written communication skills"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "BS or MS degree in Computer Science or equivalent"
+              },
+              {
+                "desirable": false,
+                "order": 8,
+                "value": "Experience in distributed computing frameworks like - Hive/Hadoop, Apache Spark"
+              },
+              {
+                "desirable": false,
+                "order": 9,
+                "value": "Experience in developing Finance or HR related applications"
+              },
+              {
+                "desirable": false,
+                "order": 10,
+                "value": "Experience with following cloud services: AWS Elastic Beanstalk, EC2, S3, CloudFront, RDS, DynamoDB, VPC, Elastic Cache, Lambda"
+              },
+              {
+                "desirable": false,
+                "order": 11,
+                "value": "Working experience with Terraform"
+              },
+              {
+                "desirable": false,
+                "order": 12,
+                "value": "Experience in creating workflows for Apache Airflow"
+              }
+            ],
+            "salaryRange": null,
+            "scrapedLocation": "Cambridge, United Kingdom",
+            "subFunction": {
+              "value": "Backend Engineer"
+            },
+            "team": null,
+            "technologiesUsed": [
+              {
+                "value": "SQL"
+              },
+              {
+                "value": "AWS"
+              },
+              {
+                "value": "Python"
+              },
+              {
+                "value": "Java"
+              },
+              {
+                "value": "Airflow"
+              },
+              {
+                "value": "Cassandra"
+              },
+              {
+                "value": "Terraform"
+              },
+              {
+                "value": "Hadoop"
+              },
+              {
+                "value": "Spark"
+              },
+              {
+                "value": "Hive"
+              },
+              {
+                "value": "RDS"
+              },
+              {
+                "value": "Oracle"
+              },
+              {
+                "value": "DynamoDB"
+              }
+            ],
+            "title": "Senior Software Engineer"
+          },
+          "job6": {
+            "company": {
+              "domainName": "character.ai",
+              "mission": "To empower everyone with Artificial General Intelligence (AGI).",
+              "name": "Character.ai",
+              "numberEmployees": 280,
+              "shortDescription": "AI natural language chatbot",
+              "size": {
+                "value": "201-500"
+              },
+              "urlSafeName": "Character-ai"
+            },
+            "externalId": "nSmVHdUU",
+            "firstLiveAt": "2026-01-02T11:43:48",
+            "formattedLocationPreferences": [
+              {
+                "name": "New York"
+              },
+              {
+                "name": "San Francisco Bay Area"
+              }
+            ],
+            "function": {
+              "value": "Data"
+            },
+            "insertedAt": "2025-12-31T02:51:46",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "We are seeking a Staff Data Scientist to partner closely with product, engineering, and growth teams to scale and optimize Character.AI’s monetization systems"
+              },
+              {
+                "order": 1,
+                "value": "This role focuses on enabling teams to design, launch, and iterate on data-informed, user-centric monetization experiences, while shaping how we measure, experiment with, and grow revenue without compromising the creativity and openness that define Character.AI"
+              },
+              {
+                "order": 2,
+                "value": "You will partner closely with product and engineering teams to drive data-informed monetization across subscriptions, advertising, and virtual currency economies"
+              },
+              {
+                "order": 3,
+                "value": "This role defines success metrics, leads experimentation, and translates complex behavioral and economic data into actionable insights, while building the data science foundations needed to support rapid product iteration and long-term growth"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://jobs.ashbyhq.com/character/df95a7a5-87ca-4f51-85fd-4bb595a47a55?utm_source=Otta",
+            "otherCompensationInformation": "+ Equity",
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "7+ years of experience as a Data Scientist working on consumer-facing products, ideally in chat, social, UGC, or entertainment platforms"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "Strong intuition for identifying the right questions and quickly driving to high-impact insights"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Proven ability to turn analysis into product decisions and shipped outcomes"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Comfortable working in fast-moving, experimental environments with incomplete data"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Experience building or scaling data science practices, including experimentation, metrics, and analytics tooling"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Direct experience supporting monetization systems, including:"
+              },
+              {
+                "desirable": true,
+                "order": 6,
+                "value": "Subscriptions and pricing"
+              },
+              {
+                "desirable": true,
+                "order": 7,
+                "value": "Advertising or ad marketplaces"
+              },
+              {
+                "desirable": true,
+                "order": 8,
+                "value": "Virtual currencies, economies, or gamified monetization"
+              },
+              {
+                "desirable": true,
+                "order": 9,
+                "value": "Background in consumer B2C products and/or B2B marketplaces"
+              }
+            ],
+            "salaryRange": {
+              "currency": "USD",
+              "maxAmount": "300000",
+              "minAmount": "180000"
+            },
+            "scrapedLocation": "Redwood City, California, United States {{REMOTE}}",
+            "subFunction": {
+              "value": "Data Scientist"
+            },
+            "team": null,
+            "technologiesUsed": [],
+            "title": "Staff Data Scientist"
+          },
+          "job7": {
+            "company": {
+              "domainName": "compstak.com",
+              "mission": "To help create a commercial real estate industry in which accurate and transparent data leads to better, faster deals for everyone.",
+              "name": "CompStak",
+              "numberEmployees": 124,
+              "shortDescription": "Commercial real estate data platform",
+              "size": {
+                "value": "101-200"
+              },
+              "urlSafeName": "CompStak-1"
+            },
+            "externalId": "8RZddfjG",
+            "firstLiveAt": "2026-07-10T18:00:48",
+            "formattedLocationPreferences": [
+              {
+                "name": "New York"
+              }
+            ],
+            "function": {
+              "value": "Sales & Account Management"
+            },
+            "insertedAt": "2026-07-07T19:31:04",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "As an Account Executive, you'll own the full sales cycle, from prospecting strategic-named accounts to closing new logos, bringing CompStak's commercial real estate data and analytics to firms making high-stakes investment and leasing decisions"
+              },
+              {
+                "order": 1,
+                "value": "You'll work closely with a supportive, collaborative team, but your number is your own"
+              },
+              {
+                "order": 2,
+                "value": "Own the full sales cycle for strategic-named accounts, from prospecting through close"
+              },
+              {
+                "order": 3,
+                "value": "Build and manage a pipeline of greenfield opportunities within Commercial Real Estate"
+              },
+              {
+                "order": 4,
+                "value": "Sell CompStak's CRE Data Platform to C-level executives and key decision-makers, translating our data into clear business value (efficiency gains, revenue impact, better decisions)"
+              },
+              {
+                "order": 5,
+                "value": "Develop a deep understanding of each prospect's business, priorities, and organizational dynamics to shape a compelling, tailored solution"
+              },
+              {
+                "order": 6,
+                "value": "Forecast pipeline and revenue accurately across your territory"
+              },
+              {
+                "order": 7,
+                "value": "Partner cross-functionally to build account strategy and close complex deals"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://jobs.lever.co/compstak/ded2dbb5-692f-4809-8eea-4d40409a9813?lever-source=Otta",
+            "otherCompensationInformation": "This is a commission based role",
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "This is an individual contributor role for a hunter who wants to build their own book of business"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "5+ years of closing experience in direct SaaS sales, consistently meeting or exceeding a $1M+ new business quota"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Experience selling to Commercial Real Estate C-level executives and/or decision-makers, or strong experience selling data/analytics products into complex, relationship-driven industries"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "PropTech or CRE industry experience"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Experience selling data/analytics platforms specifically (vs. general SaaS)"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "A track record of building a book of business from scratch (true hunter mentality)"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Comfort navigating long, multi-stakeholder sales cycles and negotiating at the executive level"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Bachelor's degree in Business or related field required"
+              }
+            ],
+            "salaryRange": {
+              "currency": "USD",
+              "maxAmount": "375000",
+              "minAmount": "100000"
+            },
+            "scrapedLocation": "New York, NY",
+            "subFunction": {
+              "value": "Account Executive"
+            },
+            "team": null,
+            "technologiesUsed": [],
+            "title": "Senior Account Executive"
+          }
+        }
+      }
+    },
+    {
+      "url": "https://api.otta.com/graphql?batch=1",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json; charset=utf-8"
+      },
+      "body": {
+        "data": {
+          "job0": {
+            "company": {
+              "domainName": "lightning.engineering",
+              "mission": "To bridge the world of open source software and the next-generation of bitcoin financial software.",
+              "name": "Lightning Labs",
+              "numberEmployees": 32,
+              "shortDescription": "Lightning Network infraastructure firm",
+              "size": {
+                "value": "21-100"
+              },
+              "urlSafeName": "Lightning-Labs"
+            },
+            "externalId": "I1td2xXd",
+            "firstLiveAt": "2024-11-21T11:57:53",
+            "formattedLocationPreferences": [
+              {
+                "name": "Remote from Canada"
+              },
+              {
+                "name": "Remote from Europe"
+              },
+              {
+                "name": "Remote from UK"
+              },
+              {
+                "name": "Remote from US"
+              }
+            ],
+            "function": {
+              "value": "Sales & Account Management"
+            },
+            "insertedAt": "2024-11-13T00:05:00",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "Lightning Labs is looking for a Business Development Strategist who is passionate about bringing bitcoin to the next billion people by onboarding new businesses to Lightning"
+              },
+              {
+                "order": 1,
+                "value": "This role will be focused on identifying businesses that will help grow the Lightning Network, building relationships with leaders in those businesses, and communicating the business value of a Lightning integration to them"
+              },
+              {
+                "order": 2,
+                "value": "Strategy:"
+              },
+              {
+                "order": 3,
+                "value": "Collaborate with leadership on business development strategy, from aligning on promising regions and verticals to identifying target companies to tailoring specific value propositions for those companies"
+              },
+              {
+                "order": 4,
+                "value": "Understand and clearly communicate how higher level shifts in the global financial market will impact Lightning Network and stablecoin adoption"
+              },
+              {
+                "order": 5,
+                "value": "Business Development:"
+              },
+              {
+                "order": 6,
+                "value": "Source new potential customers, from new Lightning-first entrepreneurs to existing bitcoin companies and non-bitcoin companies that want to add Lightning support to their apps"
+              },
+              {
+                "order": 7,
+                "value": "Support existing customers by being a point of contact for technical questions or feature requests, and by being able to explain new features and the business-related impacts of upgrading"
+              },
+              {
+                "order": 8,
+                "value": "Understand customers’ business goals, and connect them with ecosystem participants that may help them achieve them"
+              },
+              {
+                "order": 9,
+                "value": "Communications:"
+              },
+              {
+                "order": 10,
+                "value": "Write compelling, high-quality thought pieces to drive awareness and education around the Lightning Network, Lightning Labs, and its products"
+              },
+              {
+                "order": 11,
+                "value": "Support funnel growth activities, such as blog posts, press releases, engagement across social outlets, and community events"
+              },
+              {
+                "order": 12,
+                "value": "Build organic awareness and grow engagement across community platforms such as Slack, Telegram, Twitter, etc"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://jobs.ashbyhq.com/lightning/ea62b9bf-ef34-4825-8742-cb4c612c6ff4?utm_source=Otta",
+            "otherCompensationInformation": null,
+            "remoteOnly": true,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "Passion for bitcoin, Lightning, and the mission of bringing financial freedom to the world"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "At least 3-5 years of experience in a business development, strategy, financial, or other relevant role"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Attention to detail and strong writing and editing skills"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Creative thinker who can effortlessly communicate technical concepts to non-technical audiences"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Eagerness to try new things and to be energized by creative challenges"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Ability to work autonomously and collaborate across time zones"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Fast learner with a strong ability to reach out to new audiences"
+              },
+              {
+                "desirable": true,
+                "order": 9,
+                "value": "Track record of public writings regarding the global financial or payments markets, ideally with an emphasis on bitcoin, Lightning, or stablecoins"
+              },
+              {
+                "desirable": true,
+                "order": 10,
+                "value": "Ability to build relationships particularly with entrepreneurs and developers in emerging markets (LATAM, Asia, Sub-Saharan Africa)"
+              },
+              {
+                "desirable": true,
+                "order": 11,
+                "value": "Familiarity with the Lightning community and a technical understanding of bitcoin and Lightning"
+              }
+            ],
+            "salaryRange": null,
+            "scrapedLocation": "720 University Ave., Suite 200, Palo Alto, CA 94301, United States {{REMOTE}}",
+            "subFunction": {
+              "value": "Sales & Business Development"
+            },
+            "team": null,
+            "technologiesUsed": [],
+            "title": "Business Development Strategist"
+          },
+          "job1": {
+            "company": {
+              "domainName": "lightning.engineering",
+              "mission": "To bridge the world of open source software and the next-generation of bitcoin financial software.",
+              "name": "Lightning Labs",
+              "numberEmployees": 32,
+              "shortDescription": "Lightning Network infraastructure firm",
+              "size": {
+                "value": "21-100"
+              },
+              "urlSafeName": "Lightning-Labs"
+            },
+            "externalId": "bzBHd2Yv",
+            "firstLiveAt": "2022-12-05T13:57:08",
+            "formattedLocationPreferences": [
+              {
+                "name": "Remote from US"
+              }
+            ],
+            "function": {
+              "value": "Software Engineering"
+            },
+            "insertedAt": "2022-12-01T22:18:31",
+            "involvesBullets": [
+              {
+                "order": 1,
+                "value": "Designing and deploying active fuzzing, black+white box testing and penetration testing infrastructure for open source and production systems"
+              },
+              {
+                "order": 2,
+                "value": "Performing security audits and review of both internal production systems as well as open source software which interacts with Bitcoin+Lightning in a security critical manner"
+              },
+              {
+                "order": 3,
+                "value": "Provide mentorship and guidance to level up your teammates"
+              },
+              {
+                "order": 4,
+                "value": "Creating global security policy, standards, guidelines, and procedures to ensure ongoing maintenance of security"
+              },
+              {
+                "order": 5,
+                "value": "Overseeing security aspects of software release processes and infrastructure"
+              },
+              {
+                "order": 6,
+                "value": "Determining security team requirements for future growth"
+              },
+              {
+                "order": 7,
+                "value": "Developing and ensuring responsiveness of security incident management processes"
+              },
+              {
+                "order": 8,
+                "value": "Performing risk management assessments"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://jobs.ashbyhq.com/lightning/21a591d9-d731-4f2d-935d-841d3a779ec9?utm_source=Otta",
+            "otherCompensationInformation": null,
+            "remoteOnly": true,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "At least 5 years prior experience in in systems security"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "An ability to work with a high impact, fast-moving startup team"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Extensive knowledge of operating system and computer architecture internals"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Strong understanding of cryptography, protocol design and adversarial analysis"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Experience in reverse engineering and exploiting of cryptographic protocol (cryptocurrencies like Bitcoin) systems"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Extensive expertise with professional software development experience in Go, Rust, C/C++, and/or Java"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Experience in security incident response"
+              },
+              {
+                "desirable": false,
+                "order": 8,
+                "value": "Experience in security code review and vulnerability triaging"
+              },
+              {
+                "desirable": false,
+                "order": 9,
+                "value": "Prior experience running an open source facing bug bounty program"
+              },
+              {
+                "desirable": false,
+                "order": 10,
+                "value": "2+ years management experience or experience as a senior decision maker"
+              },
+              {
+                "desirable": false,
+                "order": 11,
+                "value": "Experience working with remote teams"
+              },
+              {
+                "desirable": false,
+                "order": 12,
+                "value": "Experience working with Kubernetes and AWS infrastructure"
+              },
+              {
+                "desirable": false,
+                "order": 13,
+                "value": "Working knowledge of fundamental Bitcoin and Lightning design principles"
+              },
+              {
+                "desirable": false,
+                "order": 14,
+                "value": "Candidates with additional experience are welcome to apply as we are open to adjusting the role accordingly"
+              }
+            ],
+            "salaryRange": null,
+            "scrapedLocation": "720 University Ave., Suite 200, Palo Alto, CA 94301, United States {{REMOTE}}",
+            "subFunction": {
+              "value": "Security Engineer"
+            },
+            "team": null,
+            "technologiesUsed": [
+              {
+                "value": "AWS"
+              },
+              {
+                "value": "Kubernetes"
+              },
+              {
+                "value": "Java"
+              },
+              {
+                "value": "Go"
+              },
+              {
+                "value": "C++"
+              },
+              {
+                "value": "C"
+              },
+              {
+                "value": "Rust"
+              }
+            ],
+            "title": "Senior Security Engineer"
+          },
+          "job2": {
+            "company": {
+              "domainName": "simundia.com",
+              "mission": "To make users turn their ambitions into actions.",
+              "name": "Simundia",
+              "numberEmployees": 119,
+              "shortDescription": "Online professional coaching",
+              "size": {
+                "value": "101-200"
+              },
+              "urlSafeName": "Simundia"
+            },
+            "externalId": "Pkz7N3Jz",
+            "firstLiveAt": "2025-12-17T11:24:07",
+            "formattedLocationPreferences": [
+              {
+                "name": "Paris"
+              }
+            ],
+            "function": {
+              "value": "Sales & Account Management"
+            },
+            "insertedAt": "2025-12-14T13:12:58",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "Your goal will be to contribute to Simundia’s growth by creating new sales opportunities for the italian market: looking for new opportunities, design your own commercial strategy, activating outbound (but also inbound) sales channels in order to support more and more companies in transforming thanks to coaching!"
+              },
+              {
+                "order": 1,
+                "value": "You will work closely with the italian Team as well as with the rest of the International Team"
+              },
+              {
+                "order": 2,
+                "value": "This job position can be very stimulating and a source of great challenge and satisfaction"
+              },
+              {
+                "order": 3,
+                "value": "You will highly contribute, together with the Italian Team, to the market performance and you will be able to really make a tangible impact on the market growth, with a role that will often be cross-functional and entrepreneurial"
+              },
+              {
+                "order": 4,
+                "value": "You will have the opportunity to work with an international Team, sharing processes, best practices and case studies having always a global perspective"
+              },
+              {
+                "order": 5,
+                "value": "Identifying potential customers based on a good understanding of the market (lead generation)"
+              },
+              {
+                "order": 6,
+                "value": "Business prospecting: email, phone, events"
+              },
+              {
+                "order": 7,
+                "value": "Sales appointments: with HR managers, executives, and startup CEOs"
+              },
+              {
+                "order": 8,
+                "value": "Managing the business relationship and conducting negotiations until closing the deal"
+              },
+              {
+                "order": 9,
+                "value": "Organizing and participating in trade fairs and events for clients"
+              },
+              {
+                "order": 10,
+                "value": "Being proactive in finding new business development channels"
+              },
+              {
+                "order": 11,
+                "value": "Occasionally, other various tasks (product development, offer development, sales methods, product fitting, account management activities etc.)"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://careers.simundia.com/jobs/6925295-sales-account-executive-italy?utm_source=Otta",
+            "otherCompensationInformation": null,
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "You have 3-5 years of professional experience with significant Sales/Business Development experience and/or in-depth knowledge of the ecosystem"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "You have excellent communication skills, with the ability to understand and persuade"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "You have a strong ambition to contribute to this mission of democratizing coaching"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "You have a willingness to learn, are adaptable, and have a feedback culture that allows you to grow"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "You have an entrepreneurial spirit, are proactive, and love ownership"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "You can handle complex sales cycles with high-level stakeholders"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "You have a team spirit and love challenges!"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Italian - Native"
+              },
+              {
+                "desirable": false,
+                "order": 8,
+                "value": "English - Fluent"
+              },
+              {
+                "desirable": false,
+                "order": 9,
+                "value": "French is a plus"
+              }
+            ],
+            "salaryRange": null,
+            "scrapedLocation": "Paris, FR",
+            "subFunction": {
+              "value": "Account Executive"
+            },
+            "team": null,
+            "technologiesUsed": [],
+            "title": "Sales Account Executive"
+          },
+          "job3": {
+            "company": {
+              "domainName": "infobip.com",
+              "mission": "To provide accessible, innovative global communication technology that creates seamless interactions between businesses and people across the globe.",
+              "name": "Infobip",
+              "numberEmployees": 3434,
+              "shortDescription": "Global communications platform for businesses & developers",
+              "size": {
+                "value": "1001+"
+              },
+              "urlSafeName": "Infobip"
+            },
+            "externalId": "to42tYKb",
+            "firstLiveAt": "2026-02-14T11:31:22",
+            "formattedLocationPreferences": [
+              {
+                "name": "Chicago"
+              },
+              {
+                "name": "New York"
+              }
+            ],
+            "function": {
+              "value": "Software Engineering"
+            },
+            "insertedAt": "2026-02-11T23:44:37",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "As a Senior Solution Engineer, you play a key role in creating exceptional customer experiences through high‑impact solution design, delivery, and innovation. You’ll work on some of the region’s most complex and strategic customer engagements, owning opportunities end‑to‑end—from discovery and architecture to integration and go‑live"
+              },
+              {
+                "order": 1,
+                "value": "You act as a technical leader, trusted advisor, and “go‑to” expert in the region, collaborating with internal teams across Sales, Product, Engineering, and Delivery. As a Senior, you also mentor and uplift other team members while contributing to best practices and technical excellence across the organization"
+              },
+              {
+                "order": 2,
+                "value": "Your mission is to drive value, reduce complexity, and create scalable, future‑proof solutions that help our customers achieve—and exceed—their business goals"
+              },
+              {
+                "order": 3,
+                "value": "Help customers and partners understand the value of Infobip’s solutions and services"
+              },
+              {
+                "order": 4,
+                "value": "Deeply understand customer businesses and map their needs to the right Infobip solutions and products"
+              },
+              {
+                "order": 5,
+                "value": "Advise customers on industry best practices to improve business outcomes"
+              },
+              {
+                "order": 6,
+                "value": "Continuously identify and design new, innovative solutions tailored to customer needs"
+              },
+              {
+                "order": 7,
+                "value": "Collect detailed technical requirements and design complex architectures and integration plans"
+              },
+              {
+                "order": 8,
+                "value": "Handle technical and security questionnaires with clarity and accuracy"
+              },
+              {
+                "order": 9,
+                "value": "Lead captivating demos and Proofs of Concept (POCs) for high‑profile customers"
+              },
+              {
+                "order": 10,
+                "value": "Conduct scoping exercises, effort estimations, and guide commercial teams with technical input"
+              },
+              {
+                "order": 11,
+                "value": "Deliver comprehensive, precise technical documentation for internal and external audiences"
+              },
+              {
+                "order": 12,
+                "value": "Configure and customize complex Infobip solutions to meet customer business and technical requirements"
+              },
+              {
+                "order": 13,
+                "value": "Ensure all projects are delivered on time, within scope and budget, consistently exceeding expectations"
+              },
+              {
+                "order": 14,
+                "value": "Lead consulting and solution enablement sessions; document discussions with high‑quality minutes"
+              },
+              {
+                "order": 15,
+                "value": "Create conversational workflows and strategies (natural dialog flows, wireframes, templates) for Answers and other Infobip products"
+              },
+              {
+                "order": 16,
+                "value": "Provide hands‑on technical leadership during integrations, deployments, and troubleshooting"
+              },
+              {
+                "order": 18,
+                "value": "Document solutions and share best practices within the department (e.g., through Communities of Practice)"
+              },
+              {
+                "order": 19,
+                "value": "Maintain deep awareness of market feature needs and provide input to influence product roadmaps"
+              },
+              {
+                "order": 20,
+                "value": "Mentor junior and mid‑level team members, guiding their technical and professional growth"
+              },
+              {
+                "order": 21,
+                "value": "Stay current on Infobip’s product portfolio, both technically and commercially, including updates, new features, and competitive trends"
+              },
+              {
+                "order": 22,
+                "value": "Act as the regional technical expert, supporting cross‑functional teams on complex opportunities"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://infobip.wd3.myworkdayjobs.com/en-US/InfobipCareers/job/Chicago-USA/Senior-Solution-Engineer_JR104203?source=Otta&utm_source=Otta",
+            "otherCompensationInformation": "This role is also eligible for quarterly discretionary bonus + ESOP",
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "6+ years of experience in technical pre‑sales, solution engineering, system integration, or similar roles"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "Proven expertise designing complex, scalable technical architectures in CPaaS/SaaS environments"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Experience with Voice products is highly valued"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Strong background in Telecommunications, APIs, messaging, or customer engagement platforms"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Advanced experience configuring and integrating solutions via REST APIs, SFTP, and other integration patterns"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Demonstrated ability to lead complex opportunities end‑to‑end with autonomy"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Excellent communication, storytelling, and customer‑facing skills"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Hands‑on experience conducting demos, POCs, discovery sessions, and technical deep‑dives"
+              },
+              {
+                "desirable": false,
+                "order": 8,
+                "value": "Strong project management capabilities: planning, risk mitigation, delivery execution"
+              },
+              {
+                "desirable": false,
+                "order": 9,
+                "value": "Ability to mentor team members and uplift technical standards within the team"
+              },
+              {
+                "desirable": false,
+                "order": 10,
+                "value": "Proactive, creative problem‑solver who challenges assumptions and identifies new use cases"
+              },
+              {
+                "desirable": false,
+                "order": 11,
+                "value": "Comfortable influencing senior stakeholders and navigating high‑visibility engagements"
+              }
+            ],
+            "salaryRange": {
+              "currency": "USD",
+              "maxAmount": "140000",
+              "minAmount": "107000"
+            },
+            "scrapedLocation": "Chicago (USA), United States of America {{REMOTE}}",
+            "subFunction": {
+              "value": "Sales & Solutions Engineer"
+            },
+            "team": null,
+            "technologiesUsed": [],
+            "title": "Senior Solution Engineer"
+          },
+          "job4": {
+            "company": {
+              "domainName": "orderchamp.com",
+              "mission": "To empower B2B brands and retailers with digital solutions to success in tomorrow's market.",
+              "name": "Orderchamp",
+              "numberEmployees": 28,
+              "shortDescription": "Wholesale marketplace for brands & retailers",
+              "size": {
+                "value": "21-100"
+              },
+              "urlSafeName": "Orderchamp"
+            },
+            "externalId": "m74QUn3M",
+            "firstLiveAt": "2025-01-03T12:35:47",
+            "formattedLocationPreferences": [
+              {
+                "name": "Amsterdam"
+              }
+            ],
+            "function": {
+              "value": "Sales & Account Management"
+            },
+            "insertedAt": "2025-01-02T16:05:28",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "We are seeking a full-time German-speaking Sales Intern for the DACH Market to join our team in Amsterdam"
+              },
+              {
+                "order": 1,
+                "value": "You’ll play an important role in building and maintaining relationships with our brands while gaining hands-on experience in sales and account management."
+              },
+              {
+                "order": 2,
+                "value": "If you’re a proactive, detail-oriented individual with a passion for sales and technology, this internship offers an exciting opportunity to grow your skills in a high-energy, tech-driven environment"
+              },
+              {
+                "order": 3,
+                "value": "Support brand performance by ensuring product catalogs are up-to-date, pricing is accurate, and platform guidelines are followed"
+              },
+              {
+                "order": 4,
+                "value": "Help maximize brand success on our platform, which boosts both Orderchamp’s revenue and brand growth"
+              },
+              {
+                "order": 5,
+                "value": "Manage your own sales pipeline from start to finish: identify prospects, conduct outreach, and support pitches. We give you the opportunity to gain real work experience and treat each other equally - no matter the position title"
+              },
+              {
+                "order": 6,
+                "value": "Engage with potential brands via phone, email, and screen-sharing presentations/demos"
+              },
+              {
+                "order": 7,
+                "value": "Learn and manage the HubSpot CRM to track brand interactions, prospecting, and ongoing opportunities"
+              }
+            ],
+            "live": true,
+            "officeLocation": "Leidseplein, Amsterdam",
+            "originalUrl": "https://careers.orderchamp.com/sales-intern-german-speaking/en?utm_source=Otta",
+            "otherCompensationInformation": "Internship remuneration of €500, plus bonuses.",
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "HBO/academic-level thinking"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Fluency in German and English"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Experience in sales or commerce is a plus"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "An ambitious, proactive, and resilient attitude, with a drive to reach and exceed targets"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "A confident communicator who enjoys working with people and can stay goal-focused"
+              }
+            ],
+            "salaryRange": null,
+            "scrapedLocation": "Amsterdam, Noord-Holland, NL",
+            "subFunction": {
+              "value": "Sales & Business Development"
+            },
+            "team": null,
+            "technologiesUsed": [
+              {
+                "value": "Hubspot"
+              }
+            ],
+            "title": "Sales Intern"
+          },
+          "job5": {
+            "company": {
+              "domainName": "orderchamp.com",
+              "mission": "To empower B2B brands and retailers with digital solutions to success in tomorrow's market.",
+              "name": "Orderchamp",
+              "numberEmployees": 28,
+              "shortDescription": "Wholesale marketplace for brands & retailers",
+              "size": {
+                "value": "21-100"
+              },
+              "urlSafeName": "Orderchamp"
+            },
+            "externalId": "yw8rHpQY",
+            "firstLiveAt": "2025-01-03T12:52:21",
+            "formattedLocationPreferences": [
+              {
+                "name": "Amsterdam"
+              }
+            ],
+            "function": {
+              "value": "Sales & Account Management"
+            },
+            "insertedAt": "2025-01-02T16:05:25",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "We are seeking a full-time Dutch -speaking Sales Intern for the BENELUX Market to join our team in Amsterdam. You’ll play an important role in building and maintaining relationships with our brands while gaining hands-on experience in sales and account management."
+              },
+              {
+                "order": 1,
+                "value": "If you’re a proactive, detail-oriented individual with a passion for sales and technology, this internship offers an exciting opportunity to grow your skills in a high-energy, tech-driven environment"
+              },
+              {
+                "order": 2,
+                "value": "Support brand performance by ensuring product catalogs are up-to-date, pricing is accurate, and platform guidelines are followed"
+              },
+              {
+                "order": 3,
+                "value": "Help maximize brand success on our platform, which boosts both Orderchamp’s revenue and brand growth"
+              },
+              {
+                "order": 4,
+                "value": "Manage your own sales pipeline from start to finish: identify prospects, conduct outreach, and support pitches. We give you the opportunity to gain real work experience and treat each other equally - no matter the position title"
+              },
+              {
+                "order": 5,
+                "value": "Engage with potential brands via phone, email, and screen-sharing presentations/demos"
+              },
+              {
+                "order": 6,
+                "value": "Learn and manage the HubSpot CRM to track brand interactions, prospecting, and ongoing opportunities"
+              }
+            ],
+            "live": true,
+            "officeLocation": "Leidseplein, Amsterdam ",
+            "originalUrl": "https://careers.orderchamp.com/sales-intern-dutch-speaking/en?utm_source=Otta",
+            "otherCompensationInformation": "Internship remuneration of €500, plus bonuses.",
+            "remoteOnly": false,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "HBO/academic-level thinking"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "Fluency in German and English"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "Experience in sales or commerce is a plus"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "An ambitious, proactive, and resilient attitude, with a drive to reach and exceed targets"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "A confident communicator who enjoys working with people and can stay goal-focused"
+              }
+            ],
+            "salaryRange": null,
+            "scrapedLocation": "Amsterdam, Noord-Holland, NL",
+            "subFunction": {
+              "value": "Sales & Business Development"
+            },
+            "team": null,
+            "technologiesUsed": [
+              {
+                "value": "Hubspot"
+              }
+            ],
+            "title": "Sales Intern"
+          },
+          "job6": {
+            "company": {
+              "domainName": "sandboxaq.com",
+              "mission": "To help address some of the world's most challenging problems through AI and Quantum technology.",
+              "name": "SandboxAQ",
+              "numberEmployees": 345,
+              "shortDescription": "AI & quantum computing solutions",
+              "size": {
+                "value": "201-500"
+              },
+              "urlSafeName": "SandboxAQ"
+            },
+            "externalId": "u058qDdZ",
+            "firstLiveAt": "2026-03-26T17:00:10",
+            "formattedLocationPreferences": [
+              {
+                "name": "Remote from US"
+              }
+            ],
+            "function": {
+              "value": "Product"
+            },
+            "insertedAt": "2026-03-20T01:08:23",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "As the Director of Product Management for the AI Generation Engine (SAIGE), you will be the PM lead for the team and a key partner to engineering, research, and user research. You will:"
+              },
+              {
+                "order": 1,
+                "value": "Own the product strategy and execution for our efforts in Finance & Risk Modeling, partnering closely with financial services and insurance customers to understand their workflows, risk models, and decision-making processes"
+              },
+              {
+                "order": 2,
+                "value": "Lead rapid prototyping and innovation across a broad range of new ideas and domains, driving 0→1 product discovery, experimentation, and incubation of high-potential use cases"
+              },
+              {
+                "order": 3,
+                "value": "Operate in a highly ambiguous, fast-changing environment, providing clarity on priorities, making pragmatic trade-offs, and ensuring we ship impactful prototypes and products"
+              },
+              {
+                "order": 4,
+                "value": "Lead product strategy in Finance & Risk Modeling:"
+              },
+              {
+                "order": 5,
+                "value": "Own the product vision, roadmap, and execution for our Finance/Risk portfolio, with a focus on financial services and insurance (e.g., portfolio risk, capital modeling, risk analytics, underwriting, and related workflows)"
+              },
+              {
+                "order": 6,
+                "value": "Develop a deep understanding of customer contexts, including current tools, models, and data flows (e.g., portfolio / risk modeling systems, vendor platforms, internal analytics stacks)"
+              },
+              {
+                "order": 7,
+                "value": "Partner with quantitative researchers, ML engineers, and domain experts to translate customer problems into clear product requirements and model/data needs"
+              },
+              {
+                "order": 8,
+                "value": "Define success metrics and validation strategies to compare our approaches against existing PML/ERM and portfolio views, and to demonstrate differentiated value"
+              },
+              {
+                "order": 9,
+                "value": "Drive rapid prototyping and 0→1 innovation:"
+              },
+              {
+                "order": 10,
+                "value": "Identify, evaluate, and prioritize new AI / LQM use cases across multiple domains (beyond Finance/Risk), from early signals to clearer opportunities"
+              },
+              {
+                "order": 11,
+                "value": "Lead 0→1 product discovery: problem framing, hypothesis development, lightweight customer validation, and rapid iteration on prototypes"
+              },
+              {
+                "order": 12,
+                "value": "Work with engineering and research to scope experiments that are small enough to move quickly but meaningful enough to answer key questions"
+              },
+              {
+                "order": 13,
+                "value": "Establish and champion a rigorous but pragmatic approach to ruthless prioritization, ensuring the team focuses on the highest-impact opportunities"
+              },
+              {
+                "order": 14,
+                "value": "Build strong customer and stakeholder relationships:"
+              },
+              {
+                "order": 15,
+                "value": "Serve as a trusted product partner to senior stakeholders at key customers (e.g., heads of risk, portfolio managers, actuaries, CROs), speaking credibly about risk models, scenarios, and portfolio decisions"
+              },
+              {
+                "order": 16,
+                "value": "Lead customer conversations from initial discovery through pilot definition and ongoing adoption, connecting customer needs to the SAIGE roadmap"
+              },
+              {
+                "order": 17,
+                "value": "Communicate progress, learnings, and recommendations clearly to internal and external stakeholders, including executives"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://jobs.ashbyhq.com/sandboxaq/3eabb716-eaef-432e-ad88-f3e16d01e54b?utm_source=Otta",
+            "otherCompensationInformation": "Salary dependent on location. Plus equity.",
+            "remoteOnly": true,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "This role is ideal for a seasoned product leader who is energized by uncertainty, enjoys working across disciplines (UXR, engineering, research, business), and is excited to build new AI and quantitative products from the ground up"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "You are a senior product leader who is comfortable at the intersection of AI, quantitative modeling, and financial risk"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "You thrive in ambiguity, enjoy working closely with deeply technical teams, and can just as easily go deep on models and data as you can on customer needs and business outcomes"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "You are proactive, low-ego, and collaborative, and you don’t need rigid structure to have impact"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "10+ years of product management experience, with substantial time spent on complex B2B or platform products; at least several years operating at a senior / staff / principal / director level (e.g., L7-equivalent scope)"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Experience in financial services and/or insurance, especially in one or more of:"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Risk modeling (e.g., portfolio risk, capital modeling, asset-liability management, market/credit risk, or insurance risk)"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Financial simulation or scenario analysis"
+              },
+              {
+                "desirable": false,
+                "order": 8,
+                "value": "Portfolio analytics or decision support tools"
+              },
+              {
+                "desirable": false,
+                "order": 9,
+                "value": "Demonstrated ability to work closely with quantitative and engineering teams:"
+              },
+              {
+                "desirable": false,
+                "order": 10,
+                "value": "Comfortable discussing models, data pipelines, and trade-offs with engineers and researchers"
+              },
+              {
+                "desirable": false,
+                "order": 11,
+                "value": "Able to translate between technical details and customer/business value"
+              },
+              {
+                "desirable": false,
+                "order": 12,
+                "value": "Proven track record of 0→1 product work:"
+              },
+              {
+                "desirable": false,
+                "order": 13,
+                "value": "Identifying new opportunities and shaping them from idea to prototype and early product"
+              },
+              {
+                "desirable": false,
+                "order": 14,
+                "value": "Working through high ambiguity, incomplete information, and changing constraints"
+              },
+              {
+                "desirable": false,
+                "order": 15,
+                "value": "Strong ruthless prioritization skills: can define clear frameworks, make hard trade-offs, and say “no” to good ideas to focus on the best ones"
+              },
+              {
+                "desirable": false,
+                "order": 16,
+                "value": "Exceptional customer-facing skills:"
+              },
+              {
+                "desirable": false,
+                "order": 17,
+                "value": "Confident leading discovery and roadmap conversations with senior stakeholders"
+              },
+              {
+                "desirable": false,
+                "order": 18,
+                "value": "Skilled at uncovering real needs behind stated requirements and pressure-testing problem statements"
+              },
+              {
+                "desirable": false,
+                "order": 19,
+                "value": "Demonstrated ability to drive execution without heavy process or structure:"
+              },
+              {
+                "desirable": false,
+                "order": 20,
+                "value": "Self-directed, proactive, and comfortable creating structure where needed rather than waiting for it"
+              },
+              {
+                "desirable": false,
+                "order": 21,
+                "value": "Experience in environments with shifting priorities and evolving strategies"
+              },
+              {
+                "desirable": false,
+                "order": 22,
+                "value": "Strong collaboration and communication:"
+              },
+              {
+                "desirable": false,
+                "order": 23,
+                "value": "Experience working tightly with UXR, design, engineering, and research"
+              },
+              {
+                "desirable": false,
+                "order": 24,
+                "value": "Clear written and verbal communication across technical and non-technical audiences"
+              },
+              {
+                "desirable": false,
+                "order": 25,
+                "value": "Alignment with SandboxAQ values and the SAIGE principles around rapid prototyping, learning, and shared ownership"
+              },
+              {
+                "desirable": true,
+                "order": 27,
+                "value": "Direct experience building products involving AI / ML, quantitative models, or LLM/agentic systems"
+              },
+              {
+                "desirable": true,
+                "order": 28,
+                "value": "Hands-on exposure to risk tools and vendor platforms (e.g., risk engines, portfolio analytics systems, or modeling platforms used in insurance and financial services)"
+              },
+              {
+                "desirable": true,
+                "order": 29,
+                "value": "Experience in both:"
+              },
+              {
+                "desirable": true,
+                "order": 30,
+                "value": "A high-growth startup or new product incubation context, and"
+              },
+              {
+                "desirable": true,
+                "order": 31,
+                "value": "A large, complex environment (e.g., Big Tech, major financial institution), giving you a strong sense of how to navigate stakeholders and scale impact"
+              },
+              {
+                "desirable": true,
+                "order": 32,
+                "value": "Educational background in a quantitative or technical field (e.g., computer science, mathematics, physics, statistics, engineering, finance, or similar)"
+              },
+              {
+                "desirable": false,
+                "order": 33,
+                "value": "If you’re excited by the idea of shaping the future of quantitative AI, building products with real impact in finance and insurance (and possibly other domains), and leading 0→1 innovation in a highly cross-functional team, we’d love to hear from you"
+              }
+            ],
+            "salaryRange": {
+              "currency": "USD",
+              "maxAmount": "306000",
+              "minAmount": "163200"
+            },
+            "scrapedLocation": "United States {{REMOTE}}",
+            "subFunction": {
+              "value": "Technical Product Management"
+            },
+            "team": null,
+            "technologiesUsed": [],
+            "title": "Director of Product Management"
+          },
+          "job7": {
+            "company": {
+              "domainName": "sandboxaq.com",
+              "mission": "To help address some of the world's most challenging problems through AI and Quantum technology.",
+              "name": "SandboxAQ",
+              "numberEmployees": 345,
+              "shortDescription": "AI & quantum computing solutions",
+              "size": {
+                "value": "201-500"
+              },
+              "urlSafeName": "SandboxAQ"
+            },
+            "externalId": "NX9l9Amu",
+            "firstLiveAt": "2026-01-15T10:12:27",
+            "formattedLocationPreferences": [
+              {
+                "name": "Remote from US"
+              }
+            ],
+            "function": {
+              "value": "Data"
+            },
+            "insertedAt": "2026-01-09T19:02:10",
+            "involvesBullets": [
+              {
+                "order": 0,
+                "value": "The AI Generation Engine (SAIGE) team is responsible for rapidly designing, prototyping, and validating AI-first SaaS products that leverage SandboxAQ’s Large Quantitative Models (LQMs) and emerging agentic frameworks"
+              },
+              {
+                "order": 1,
+                "value": "The team operates at high velocity, bridging cutting-edge AI research and production-grade software to unlock new use cases across the company"
+              },
+              {
+                "order": 2,
+                "value": "SandboxAQ's AI Generation Engine (SAIGE) team is seeking a highly accomplished Machine Learning Engineer to take ownership of the end-to-end ML lifecycle, from initial data exploration and model development to scalable production deployment"
+              },
+              {
+                "order": 3,
+                "value": "This role is central to designing and rapidly building AI-first products that incorporate Large Quantitative Models (LQMs) and sophisticated agentic frameworks"
+              },
+              {
+                "order": 4,
+                "value": "This person will be one of the founding engineers to join the SAIGE team and will be the bridge between cutting-edge AI concepts and functional, real-world MVPs"
+              },
+              {
+                "order": 5,
+                "value": "As a Machine Learning Engineer on the SAIGE team, your primary goal will be to rapidly iterate on different potential solutions to build and evaluate new models, focusing on speed and tangible outcomes"
+              },
+              {
+                "order": 6,
+                "value": "You'll be part of a diverse team consisting of software engineers, ML experts, products managers and user experience researchers, where they will play a key role in efficient and effective enablement of the cutting-edge technologies being developed at SandboxAQ"
+              },
+              {
+                "order": 7,
+                "value": "Design, construct, and manage robust data pipelines for the training, validation, and continuous retraining of Large Quantitative Models (LQMs) and agentic frameworks"
+              },
+              {
+                "order": 8,
+                "value": "Develop, implement, and rigorously test novel ML models and algorithms, defining appropriate metrics to ensure model performance aligns with high-level product objectives"
+              },
+              {
+                "order": 9,
+                "value": "Lead the effort in cleaning, transforming, and engineering features from complex and large-scale datasets to optimize LQM performance and predictive accuracy"
+              },
+              {
+                "order": 10,
+                "value": "Conduct deep analysis of model behavior, performance, and failure modes, tuning hyper-parameters and optimizing model architecture for efficiency, speed, and accuracy in a production context"
+              },
+              {
+                "order": 11,
+                "value": "Collaborate closely with AI researchers, product managers, and SWEs to translate high-level business objectives into actionable ML development and deployment roadmaps"
+              },
+              {
+                "order": 12,
+                "value": "Champion and enforce exceptional engineering standards for code quality, system efficiency, and security in a prototyping environment"
+              },
+              {
+                "order": 13,
+                "value": "Drive technical execution with high autonomy, making critical design and implementation decisions independently"
+              }
+            ],
+            "live": true,
+            "officeLocation": null,
+            "originalUrl": "https://jobs.ashbyhq.com/sandboxaq/f760ffd1-3795-4fb1-bb33-8478d4bab7f6?utm_source=Otta",
+            "otherCompensationInformation": "Salary is dependent on location",
+            "remoteOnly": true,
+            "requirements": [
+              {
+                "desirable": false,
+                "order": 0,
+                "value": "We are looking for a hands-on engineer who is passionate about owning the entire lifecycle of model development"
+              },
+              {
+                "desirable": false,
+                "order": 1,
+                "value": "This requires significant industry experience in bringing machine learning models from conception and experimentation to production and deployment in a robust, scalable manner, including (but not limited to): Data Acquisition and Curation, Infrastructure, Pre-Training, Evaluations, and Fine-Tuning"
+              },
+              {
+                "desirable": false,
+                "order": 2,
+                "value": "BS in Software Engineering, Computer Science, or equivalent field of study"
+              },
+              {
+                "desirable": false,
+                "order": 3,
+                "value": "8+ years of postgraduate experience in software development"
+              },
+              {
+                "desirable": false,
+                "order": 4,
+                "value": "Experience developing highly-available, performant, scalable ML systems, including large-scale data processing pipelines"
+              },
+              {
+                "desirable": false,
+                "order": 5,
+                "value": "Strong expertise in Python (including the ML stack: PyTorch, TensorFlow, JAX, NumPy, Pandas)"
+              },
+              {
+                "desirable": false,
+                "order": 6,
+                "value": "Long, successful history of driving the full ML lifecycle: from initial data exploration and hypothesis testing to architecture, model training, evaluation, and production deployment"
+              },
+              {
+                "desirable": false,
+                "order": 7,
+                "value": "Deep proficiency in MLOps and software best practices, including CI/CD for ML, experiment tracking (e.g., Weights & Biases, MLflow), automated testing, and version control for both code and datasets"
+              },
+              {
+                "desirable": true,
+                "order": 8,
+                "value": "MS or PhD in Software Engineering, Computer Science or equivalent experience"
+              },
+              {
+                "desirable": true,
+                "order": 9,
+                "value": "Financial simulation or technical experience, risk simulation"
+              },
+              {
+                "desirable": true,
+                "order": 10,
+                "value": "Equivalent experience includes tech leadership in a complex space, driving technical design and execution cross-collaboratively across multiple teams and organizations"
+              },
+              {
+                "desirable": true,
+                "order": 11,
+                "value": "Experience with scalable software development on cloud computing platforms (e.g., GCP, AWS)"
+              }
+            ],
+            "salaryRange": {
+              "currency": "USD",
+              "maxAmount": "286000",
+              "minAmount": "173000"
+            },
+            "scrapedLocation": "United States {{REMOTE}}",
+            "subFunction": {
+              "value": "Machine Learning Engineer"
+            },
+            "team": null,
+            "technologiesUsed": [
+              {
+                "value": "Python"
+              },
+              {
+                "value": "Tensorflow"
+              },
+              {
+                "value": "NumPy"
+              },
+              {
+                "value": "Pandas"
+              },
+              {
+                "value": "PyTorch"
+              }
+            ],
+            "title": "Staff Machine Learning Engineer"
+          }
+        }
+      }
+    }
+  ]
+}

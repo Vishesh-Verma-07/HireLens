@@ -112,7 +112,10 @@ sources:
   otta:
     enabled: true
     limit: 100
-    # Optional filters:
+    # Otta has no public search API, so this resolves the last N job ids from
+    # its sitemap (default: limit * 2, capped at 400).
+    # scanLimit: 200
+    # Optional filters (salaryMin uses the top of the posted range):
     # salaryMin: 0
     # location: Remote
 

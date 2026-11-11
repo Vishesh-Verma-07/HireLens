@@ -14,6 +14,8 @@ const JOB_POSTING_SOURCES = new Set([
   "arbeitnow",
   "internshala",
   "unstop",
+  "wellfound",
+  "otta",
   "workatastartup",
   "hn",
   "google",
