@@ -62,6 +62,7 @@ test("discovers every built-in source without editing index.ts", async () => {
       "remoteok",
       "remotive",
       "unstop",
+      "wellfound",
       "yc",
     ],
   );
