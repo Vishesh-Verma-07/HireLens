@@ -8,17 +8,52 @@
 //              only" side of the matcher.
 //   Match    — a startup with a fit score and human-readable reasons.
 
-export type SourceId =
-  | "yc"
-  | "hn"
-  | "funding"
-  | "producthunt"
-  | "remoteok"
-  | "remotive"
-  | "arbeitnow"
-  | "internshala"
-  | "unstop"
-  | "google";
+/**
+ * Every source the matcher knows about, grouped by category.
+ *
+ * This stays a runtime array so config validation and tests can assert that
+ * `sources.yaml` covers every id. `SourceId` is derived from it, which keeps
+ * the type and the runtime list from drifting apart.
+ */
+export const SOURCE_IDS = [
+  // Original signals + boards.
+  "yc",
+  "hn",
+  "funding",
+  "producthunt",
+  "remoteok",
+  "remotive",
+  "arbeitnow",
+  "internshala",
+  "unstop",
+  "google",
+  // Tier 1: public job-board APIs.
+  "wellfound",
+  "otta",
+  "workatastartup",
+  "himalayas",
+  // Tier 2: RSS/Atom feeds.
+  "weworkremotely",
+  "remoteco",
+  "jobspresso",
+  "tldr_jobs",
+  "bytebytego",
+  "indiehackers",
+  // Tier 3: niche boards.
+  "ai_jobs_net",
+  "climatebase",
+  "web3_career",
+  "devrel_careers",
+  // India-focused boards.
+  "naukri",
+  "cutshort",
+  // Company career-page aggregators.
+  "greenhouse",
+  "lever",
+  "ashby",
+] as const;
+
+export type SourceId = (typeof SOURCE_IDS)[number];
 
 export type SignalType = "raised" | "launched" | "hiring" | "news";
 

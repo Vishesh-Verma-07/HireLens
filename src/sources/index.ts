@@ -11,6 +11,32 @@ import type { DiscoveredSource } from "./types.js";
 
 export { discoverSources, loadSourceRegistry, planSources, resetSourceRegistry } from "./registry.js";
 export type { SourceConfig, SourceSettings } from "./registry.js";
+export { normalizeSourceSettings, SOURCE_DEFAULTS } from "./config.js";
+export type {
+  AiJobsNetConfig,
+  AshbyConfig,
+  ByteByteGoConfig,
+  ClimatebaseConfig,
+  CompanyAggregatorConfig,
+  CutshortConfig,
+  DevRelCareersConfig,
+  FeedSourceConfig,
+  GreenhouseConfig,
+  HimalayasConfig,
+  IndieHackersConfig,
+  JobspressoConfig,
+  LeverConfig,
+  LimitedSourceConfig,
+  NaukriConfig,
+  OttaConfig,
+  RemoteCoConfig,
+  SourceSettingsMap,
+  TldrJobsConfig,
+  Web3CareerConfig,
+  WellfoundConfig,
+  WeWorkRemotelyConfig,
+  WorkAtAStartupConfig,
+} from "./config.js";
 export type {
   BaseSourceConfig,
   DiscoveredSource,
@@ -26,7 +52,11 @@ export interface CollectOptions {
 }
 
 export function loadSourceConfig(path: string): SourceConfig {
-  return parse(readFileSync(path, "utf8")) as SourceConfig;
+  const parsed = parse(readFileSync(path, "utf8")) as unknown;
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    throw new Error(`sources config at ${path} must be a YAML mapping`);
+  }
+  return parsed as SourceConfig;
 }
 
 /**

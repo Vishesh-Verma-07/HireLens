@@ -57,6 +57,28 @@ const DISCOVERED_VIA: Record<SourceId, HubJobPayload["discoveredVia"]> = {
   internshala: "job_board",
   unstop: "job_board",
   google: "google",
+
+  wellfound: "job_board",
+  otta: "job_board",
+  workatastartup: "job_board",
+  himalayas: "job_board",
+  weworkremotely: "job_board",
+  remoteco: "job_board",
+  jobspresso: "job_board",
+  ai_jobs_net: "job_board",
+  climatebase: "job_board",
+  web3_career: "job_board",
+  devrel_careers: "job_board",
+  naukri: "job_board",
+  cutshort: "job_board",
+  greenhouse: "job_board",
+  lever: "job_board",
+  ashby: "job_board",
+
+  // Newsletter/digest sources.
+  tldr_jobs: "newsfeed",
+  bytebytego: "newsfeed",
+  indiehackers: "newsfeed",
 };
 
 interface HubState {

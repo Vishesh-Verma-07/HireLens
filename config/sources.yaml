@@ -92,3 +92,112 @@ sources:
     boards: core
     # variants: false
     # sponsored: true
+
+  # ---------------------------------------------------------------------------
+  # New sources (schema added in Ticket 03; modules land in Tickets 07-23,
+  # except the two newsletter feeds, which have no ticket yet)
+  #
+  # Every field is optional; missing values fall back to the defaults in
+  # `src/sources/config.ts`. Unknown ids and malformed values only warn.
+  # ---------------------------------------------------------------------------
+
+  # Tier 1 - public job-board APIs.
+  wellfound:
+    enabled: true
+    limit: 100
+    # Optional key for a higher API quota.
+    # apiKey: ${WELLFOUND_API_KEY}
+    categories: [engineering, product, design]
+
+  otta:
+    enabled: true
+    limit: 100
+    # Optional filters:
+    # salaryMin: 0
+    # location: Remote
+
+  workatastartup:
+    enabled: true
+    limit: 100
+
+  himalayas:
+    enabled: true
+    limit: 100
+    remoteOnly: true
+
+  # Tier 2 - RSS/Atom feeds.
+  weworkremotely:
+    enabled: true
+    limit: 100
+    feedUrl: https://weworkremotely.com/categories/remote-programming-jobs.rss
+
+  remoteco:
+    enabled: true
+    limit: 100
+    feedUrl: https://remote.co/remote-jobs/feed/
+
+  jobspresso:
+    enabled: true
+    limit: 100
+    feedUrl: "https://jobspresso.co/?feed=job_feed"
+
+  tldr_jobs:
+    enabled: true
+    limit: 50
+    feedUrl: https://tldr.tech/jobs/rss
+
+  # Newsletter feeds: no stable public feed URL yet, so they stay off until a
+  # source ticket fills one in.
+  bytebytego:
+    enabled: false
+    limit: 50
+    # feedUrl: https://bytebytego.com/jobs/rss
+
+  indiehackers:
+    enabled: false
+    limit: 50
+    # feedUrl: https://www.indiehackers.com/jobs/feed
+
+  # Tier 3 - niche and specialized boards.
+  ai_jobs_net:
+    enabled: true
+    limit: 60
+
+  climatebase:
+    enabled: true
+    limit: 60
+
+  web3_career:
+    enabled: true
+    limit: 60
+
+  devrel_careers:
+    enabled: true
+    limit: 60
+
+  # India-focused boards. Both need HTML scraping, so they are opt-in.
+  naukri:
+    enabled: false
+    limit: 100
+    categories: [it-software, engineering]
+
+  cutshort:
+    enabled: false
+    limit: 60
+
+  # Company career-page aggregators. Opt-in per run: add the company slugs you
+  # care about under `companies`.
+  greenhouse:
+    enabled: false
+    limit: 50
+    companies: [stripe, airtable, notion]
+
+  lever:
+    enabled: false
+    limit: 50
+    companies: []
+
+  ashby:
+    enabled: false
+    limit: 50
+    companies: []

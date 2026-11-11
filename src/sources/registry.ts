@@ -34,14 +34,19 @@ import { readdirSync } from "node:fs";
 import { basename, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { logger } from "../lib/log.js";
-import type { SourceId } from "../types.js";
+import { SOURCE_IDS, type SourceId } from "../types.js";
+import {
+  normalizeSourceSettings,
+  type SourceSettings,
+  type SourceSettingsMap,
+} from "./config.js";
 import type { DiscoveredSource, SourceFetch } from "./types.js";
 
 /** Source modules are TypeScript in dev and may be JS in a compiled checkout. */
 const MODULE_EXTENSIONS = [".ts", ".js", ".mjs"] as const;
 
 /** Non-source modules that live beside the sources. */
-const SKIP_FILES = new Set(["index.ts", "registry.ts", "rss.ts", "types.ts"]);
+const SKIP_FILES = new Set(["index.ts", "registry.ts", "rss.ts", "types.ts", "config.ts"]);
 
 function isSourceFile(name: string): boolean {
   if (name.endsWith(".d.ts")) return false;
@@ -128,13 +133,19 @@ export function resetSourceRegistry(): void {
   cachedRegistry = undefined;
 }
 
-export interface SourceSettings {
-  enabled?: boolean;
-  [key: string]: unknown;
-}
+export type { SourceSettings } from "./config.js";
 
+/**
+ * The parsed `config/sources.yaml` root.
+ *
+ * Known ids resolve to their typed block; the index signature keeps unknown
+ * ids (a typo or a source added in a newer config) parseable so `planSources`
+ * can warn instead of failing.
+ */
 export interface SourceConfig {
-  sources?: Record<string, SourceSettings | undefined>;
+  sources?:
+    | (Partial<SourceSettingsMap> & Record<string, SourceSettings | undefined>)
+    | undefined;
 }
 
 export interface PlannedSource {
@@ -172,15 +183,25 @@ export function planSources(
   }
   const settingsById = isRecord(configured) ? configured : {};
 
+  // A configured id that exists in `SourceId` but has no module yet is planned
+  // work, not a typo; keep the two warnings distinguishable.
+  const plannedIds = new Set<string>(SOURCE_IDS);
+
   for (const id of Object.keys(settingsById)) {
-    if (!registered.has(id)) {
+    if (registered.has(id)) continue;
+    if (plannedIds.has(id)) {
+      warnings.push(`source "${id}" is configured but not implemented yet — skipping`);
+    } else {
       warnings.push(`unknown source "${id}" in config — ignoring`);
     }
   }
 
   if (only) {
     for (const id of only) {
-      if (!registered.has(id)) {
+      if (registered.has(id)) continue;
+      if (plannedIds.has(id)) {
+        warnings.push(`source "${id}" in --source is not implemented yet — skipping`);
+      } else {
         warnings.push(`unknown source "${id}" in --source — ignoring`);
       }
     }
@@ -201,6 +222,10 @@ export function planSources(
         warnings.push(`source "${source.id}" config must be a mapping — using defaults`);
       }
     }
+
+    const normalized = normalizeSourceSettings(source.id, settings);
+    settings = normalized.settings;
+    warnings.push(...normalized.warnings);
 
     if (settings.enabled === false) continue;
     run.push({ source, settings });
