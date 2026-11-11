@@ -14,7 +14,8 @@
     "email:test": "tsx src/channels/email/bot.ts --test",
     "email:send": "tsx src/channels/email/bot.ts --send-now",
     "backfill:hub": "tsx scripts/backfill-hub.ts",
-    "test": "node --import tsx --test \"src/**/*.test.ts\"",
+    "record:fixture": "tsx scripts/record-fixture.ts",
+    "test": "node --import tsx --test \"src/**/*.test.ts\" \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

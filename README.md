@@ -89,6 +89,20 @@ npm run match:llm             # refine the top slice with an LLM (needs OPENAI_A
 npm run match -- --limit 25 --source yc,hn
 ```
 
+### Tests
+
+```bash
+npm test                                  # every src/ + test/ *.test.ts file, offline
+npm run typecheck                         # tsc --noEmit
+npm run record:fixture remoteok           # refresh a source fixture from the live API
+npm run record:fixture remoteok -- --trim 25   # big feeds: keep the first N array items
+```
+
+Source tests never hit the network: each one replays a recorded response from
+`test/fixtures/<source>.json` and then runs the shared contract check
+(`assertValidStartups`). See `test/fixtures/README.md` for the fixture format and
+the copy-paste test template.
+
 ### Board Scan — Google results in the digest
 
 The API/RSS sources above only see boards that publish a feed. Board Scan covers
@@ -310,6 +324,11 @@ src/
   store/db.ts           # seen-store for the CLI's "new only"
   report/digest.ts      # Markdown / text / HTML renderers
   channels/email/       # config, mailer (SMTP+IMAP), bot loop
+test/
+  fixtures/             # one recorded API response per source (+ README)
+  fixtures.ts           # load/replay a fixture by swapping globalThis.fetch
+  contract.ts           # assertValidStartups(startups, sourceId)
+scripts/record-fixture.ts # `npm run record:fixture <source>`
 config/sources.yaml     # which sources, which feeds, YC options
 profile/profile.yaml    # YOUR profile  ← the "for me only" file
 .env.example            # mail + Google search credentials template
@@ -323,6 +342,19 @@ on the next run — there is no `index.ts` import to add. Helpers (no `sourceId`
 and `*.test.ts` files are ignored. Add the id to the `SourceId` union in
 `src/types.ts`, and tune it in `config/sources.yaml` if it needs non-default
 settings. The header of `src/sources/registry.ts` has a copy-paste template.
+
+Every source also gets a test. Record its fixture once, then copy the template
+from `test/fixtures/README.md` into `src/sources/<source>.test.ts`:
+
+```bash
+npm run record:fixture newboard
+npm test
+```
+
+The test replays the fixture through the real fetch function and calls
+`assertValidStartups(startups, "newboard")`, which enforces the
+`{source}:{id}` id format, non-empty signals, valid `SignalType`s, and ISO dates.
+That is usually a 2-minute loop for a new source.
 
 ## 8. Going multi-user later
 

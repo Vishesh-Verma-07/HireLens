@@ -1,56 +1,27 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { assertValidStartups } from "../../test/contract.js";
+import { withFixtureFetch } from "../../test/fixtures.js";
 import { fetchRemoteOk } from "./remoteok.js";
 
-/** A trimmed snapshot of RemoteOK's public JSON feed. */
-const FIXTURE = [
-  { legal: "See https://remoteok.com/legal" },
-  {
-    id: "123",
-    slug: "acme-backend-engineer",
-    date: "2026-11-01T10:00:00Z",
-    company: "Acme",
-    position: "Backend Engineer",
-    tags: ["node", "postgres"],
-    location: "Worldwide",
-    url: "https://remoteok.com/remote-jobs/123",
-    description: "<p>Build APIs with <strong>Node</strong>.</p>",
-  },
-  {
-    id: "124",
-    company: "Acme",
-    position: "Account Executive",
-    url: "https://remoteok.com/remote-jobs/124",
-  },
-  {
-    id: "125",
-    company: "Acme",
-    position: "Product Designer",
-    url: "https://remoteok.com/remote-jobs/125",
-  },
-];
+/**
+ * Template for a source test — copy this file for a new source.
+ *
+ * 1. Record a fixture once: `npm run record:fixture <source>`
+ * 2. Replay it offline with `withFixtureFetch`.
+ * 3. Run the shared contract with `assertValidStartups`.
+ *
+ * Never hit the live API from a test: a fixture makes the test deterministic and
+ * keeps CI offline.
+ */
+test("remoteok: recorded fixture parses into valid Startups", async () => {
+  const startups = await withFixtureFetch("remoteok", () =>
+    fetchRemoteOk({ limit: 10 }),
+  );
 
-test("fetchRemoteOk still parses the feed through the shared HTTP client", async () => {
-  const originalFetch = globalThis.fetch;
-  let requestedUrl = "";
+  assert.ok(startups.length > 0, "fixture should contain at least one tech role");
+  assertValidStartups(startups, "remoteok");
 
-  globalThis.fetch = (async (input: string | URL | Request) => {
-    requestedUrl = String(input);
-    return new Response(JSON.stringify(FIXTURE), { status: 200 });
-  }) as typeof fetch;
-
-  try {
-    const jobs = await fetchRemoteOk({ limit: 10 });
-
-    assert.equal(requestedUrl, "https://remoteok.com/api");
-    assert.equal(jobs.length, 1);
-    assert.equal(jobs[0]?.id, "remoteok:123");
-    assert.equal(jobs[0]?.source, "remoteok");
-    assert.equal(jobs[0]?.name, "Acme");
-    assert.equal(jobs[0]?.oneLiner, "Backend Engineer");
-    assert.match(jobs[0]?.description ?? "", /Build APIs with Node/);
-    assert.equal(jobs[0]?.signals[0]?.type, "hiring");
-  } finally {
-    globalThis.fetch = originalFetch;
-  }
+  assert.equal(startups[0]?.signals[0]?.type, "hiring");
+  assert.equal(startups[0]?.remote, true);
 });
