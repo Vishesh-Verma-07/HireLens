@@ -23,6 +23,7 @@ import type { RemoteOkConfig } from "./remoteok.js";
 import type { RemotiveConfig } from "./remotive.js";
 import type { BaseSourceConfig } from "./types.js";
 import type { UnstopConfig } from "./unstop.js";
+import type { WeWorkRemotelyConfig } from "./weworkremotely.js";
 import type { WorkAtAStartupConfig } from "./workatastartup.js";
 import type { YcConfig } from "./yc.js";
 
@@ -61,7 +62,7 @@ export interface HimalayasConfig extends LimitedSourceConfig {
   remoteOnly?: boolean;
 }
 
-export type WeWorkRemotelyConfig = FeedSourceConfig;
+export type { WeWorkRemotelyConfig };
 export type RemoteCoConfig = FeedSourceConfig;
 export type JobspressoConfig = FeedSourceConfig;
 export type TldrJobsConfig = FeedSourceConfig;
