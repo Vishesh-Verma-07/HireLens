@@ -54,6 +54,7 @@ test("discovers every built-in source without editing index.ts", async () => {
     sources.map((source) => source.id).sort(),
     [
       "arbeitnow",
+      "ashby",
       "funding",
       "google",
       "greenhouse",
