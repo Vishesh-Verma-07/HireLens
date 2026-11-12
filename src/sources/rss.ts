@@ -1,6 +1,6 @@
 import { XMLParser } from "fast-xml-parser";
 import { fetchText } from "../lib/http.js";
-import { htmlToText } from "../lib/text.js";
+import { firstLine, htmlToText } from "../lib/text.js";
 
 export interface FeedItem {
   title: string;
@@ -15,6 +15,16 @@ export interface FeedItem {
   category?: string;
   /** Feed-specific location, e.g. "Anywhere in the World". */
   region?: string;
+  /**
+   * Company name, when the feed exposes one (job feeds do, news feeds do not).
+   * Falls back to the first line of `dc:creator`, which WordPress job feeds
+   * format as "Company<br>⚲ Location".
+   */
+  company?: string;
+  /** Location text, when the feed exposes one (e.g. `job_listing:location`). */
+  location?: string;
+  /** Feed-provided category/type labels, split on commas. */
+  categories?: string[];
 }
 
 const parser = new XMLParser({
@@ -45,6 +55,17 @@ function textOf(value: unknown): string {
   return "";
 }
 
+/** Reads a feed value (string or list) into trimmed, de-duplicated labels. */
+function labelsOf(value: unknown): string[] {
+  if (value === undefined) return [];
+  const values = Array.isArray(value) ? value : [value];
+  const labels = values
+    .flatMap((entry) => textOf(entry).split(","))
+    .map((entry) => entry.trim())
+    .filter(Boolean);
+  return [...new Set(labels)];
+}
+
 /** Minimal RSS/Atom reader. Returns normalized items. */
 export async function fetchFeed(url: string): Promise<FeedItem[]> {
   const xml = await fetchText(url, { headers: { accept: "application/rss+xml, application/xml, text/xml" } });
@@ -72,6 +93,18 @@ export async function fetchFeed(url: string): Promise<FeedItem[]> {
 
     const summaryText = summaryRaw ? htmlToText(summaryRaw) : "";
 
+    // Job feeds (WordPress `job_listing` namespace) name the employer in
+    // `job_listing:company`; news feeds often only have `dc:creator`, which
+    // WordPress job feeds format as "Company<br>⚲ Location".
+    const companyRaw =
+      textOf(entry["job_listing:company"]) || textOf(entry["dc:creator"]) || "";
+    const company = companyRaw ? firstLine(htmlToText(companyRaw)) : "";
+    const location = textOf(entry["job_listing:location"]).trim();
+    const categories = [
+      ...labelsOf(entry["job_listing:job_type"]),
+      ...labelsOf(entry["job_listing:job_category"]),
+    ];
+
     items.push({
       title,
       link: link || undefined,
@@ -81,6 +114,9 @@ export async function fetchFeed(url: string): Promise<FeedItem[]> {
       guid: textOf(entry.guid) || undefined,
       category: textOf(entry.category) || undefined,
       region: textOf(entry.region) || undefined,
+      company: company || undefined,
+      location: location || undefined,
+      categories: categories.length > 0 ? [...new Set(categories)] : undefined,
     });
   }
 
