@@ -64,6 +64,7 @@ test("discovers every built-in source without editing index.ts", async () => {
       "remotive",
       "unstop",
       "wellfound",
+      "weworkremotely",
       "workatastartup",
       "yc",
     ],
@@ -88,6 +89,36 @@ test("config/sources.yaml enables otta in a real collection plan", async () => {
   assert.ok(
     !plan.warnings.some((warning) => warning.includes('"otta"')),
     "otta is implemented, so it must not warn",
+  );
+});
+
+test("config/sources.yaml enables weworkremotely in a real collection plan", async () => {
+  const config = loadSourceConfig(
+    resolve(import.meta.dirname, "../../config/sources.yaml"),
+  );
+  const sources = await discoverSources();
+  const plan = planSources(config, sources);
+  const planned = plan.run.find((entry) => entry.source.id === "weworkremotely");
+
+  assert.ok(planned, "sources.yaml has weworkremotely enabled, so the plan must include it");
+  assert.equal(planned.settings.limit, 100);
+  assert.equal(
+    planned.settings.feedUrl,
+    "https://weworkremotely.com/categories/remote-programming-jobs.rss",
+  );
+  assert.ok(
+    !plan.warnings.some((warning) => warning.includes('"weworkremotely"')),
+    "weworkremotely is implemented, so it must not warn",
+  );
+
+  const disabled = planSources(
+    { sources: { weworkremotely: { enabled: false } } },
+    sources,
+  );
+  assert.equal(
+    disabled.run.some((entry) => entry.source.id === "weworkremotely"),
+    false,
+    "enabled: false must keep the source out of the run",
   );
 });
 

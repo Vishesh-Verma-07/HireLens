@@ -132,6 +132,8 @@ sources:
   weworkremotely:
     enabled: true
     limit: 100
+    # Programming-category feed. Non-tech titles are filtered out even when
+    # this points at the all-jobs feed.
     feedUrl: https://weworkremotely.com/categories/remote-programming-jobs.rss
 
   remoteco:
