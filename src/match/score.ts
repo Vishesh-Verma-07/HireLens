@@ -17,6 +17,7 @@ const JOB_POSTING_SOURCES = new Set([
   "wellfound",
   "otta",
   "workatastartup",
+  "himalayas",
   "hn",
   "google",
 ]);
