@@ -572,7 +572,7 @@ export function jobsFromSitemap(xml: string): ParsedJob[] {
 }
 
 function activeCategories(categories: string[] | undefined): string[] {
-  const requested = (categories ?? []).filter(
+  const requested = (Array.isArray(categories) ? categories : []).filter(
     (category) => CATEGORY_PATTERNS[category] !== undefined,
   );
   return requested.length > 0 ? requested : Object.keys(CATEGORY_PATTERNS);
@@ -637,14 +637,17 @@ export async function fetchNaukri(
 
   const sitemaps = [
     textValue(config.sitemapUrl),
-    ...(config.sitemaps ?? []).map((url) => textValue(url)),
+    ...(Array.isArray(config.sitemaps) ? config.sitemaps : []).map((url) =>
+      textValue(url),
+    ),
   ].filter((url): url is string => url !== undefined);
   const urls = sitemaps.length > 0 ? sitemaps : [DEFAULT_SITEMAP_URL];
 
-  const scanLimit = Math.max(
-    1,
-    Math.min(MAX_SCAN_LIMIT, config.scanLimit ?? MAX_SCAN_LIMIT),
-  );
+  const requestedScan =
+    typeof config.scanLimit === "number" && Number.isFinite(config.scanLimit)
+      ? config.scanLimit
+      : MAX_SCAN_LIMIT;
+  const scanLimit = Math.max(1, Math.min(MAX_SCAN_LIMIT, requestedScan));
   const categories = activeCategories(config.categories);
 
   const seen = new Set<string>();
