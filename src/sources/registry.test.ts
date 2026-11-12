@@ -61,6 +61,7 @@ test("discovers every built-in source without editing index.ts", async () => {
       "hn",
       "internshala",
       "jobspresso",
+      "lever",
       "otta",
       "producthunt",
       "remoteco",
