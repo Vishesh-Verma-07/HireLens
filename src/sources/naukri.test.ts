@@ -141,6 +141,28 @@ test("naukri: drops non-technical postings", async () => {
   assert.equal(ids.size, startups.length, "a posting must appear once");
 });
 
+test("naukri: keeps multi-word and plural technical titles", async () => {
+  const startups = await withFixtureFetch("naukri", () =>
+    fetchNaukri({ limit: 500 }),
+  );
+  const byId = new Map(startups.map((startup) => [startup.id, startup]));
+
+  const sre = byId.get("naukri:161026007087");
+  assert.ok(sre, "a site-reliability role must not be dropped");
+  assert.equal(sre.oneLiner, "Site Reliability Engineering SRE");
+  assert.equal(sre.name, "Deloitte Shared Services");
+
+  const dataScientist = byId.get("naukri:261026014790");
+  assert.ok(dataScientist, "a data-scientist role must not be dropped");
+  assert.equal(dataScientist.oneLiner, "Data Scientist 5 WFO");
+  assert.equal(dataScientist.name, "Enigma Human Capital");
+
+  const architect = byId.get("naukri:151026023326");
+  assert.ok(architect, "a solution-architect role must not be dropped");
+  assert.equal(architect.oneLiner, "AWS Solution Architect");
+  assert.equal(architect.name, "Quess IT Solutions");
+});
+
 test("naukri: respects the limit and keeps the newest postings", async () => {
   const startups = await withFixtureFetch("naukri", () =>
     fetchNaukri({ limit: 5 }),

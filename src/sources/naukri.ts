@@ -326,6 +326,7 @@ const TITLE_NOISE = new Set([
   "joiners",
   "joiner",
   "looking",
+  "only",
   "we",
   "are",
   "is",
@@ -334,9 +335,25 @@ const TITLE_NOISE = new Set([
   "the",
 ]);
 
-/** Title words that can trail the role keyword ("Engineer II", "Developer Sr"). */
+/** Single-word role keywords, plural forms included ("Developers"). */
+const TECH_TOKEN =
+  /^(engineers?|engineering|developers?|programmers?|software|fullstack|devops|sre|platforms?|architects?|scientists?|ml|ai)$/i;
+
+/** Two-word role keywords, matched as an adjacent token pair. */
+const TECH_PAIRS = new Set([
+  "full-stack",
+  "front-end",
+  "back-end",
+  "machine-learning",
+  "data-scientist",
+  "data-scientists",
+  "site-reliability",
+  "software-engineer",
+]);
+
+/** Words that can trail the role keyword ("Engineer II", "Data Scientist 5 WFO"). */
 const TITLE_TAIL =
-  /^(i|ii|iii|iv|v|1|2|3|4|5|sr|jr|senior|junior|lead|principal|staff|trainee|intern|contract)$/;
+  /^(i|ii|iii|iv|v|1|2|3|4|5|sr|jr|senior|junior|lead|principal|staff|trainee|intern|contract|wfo|wfh|remote|hybrid|onsite|\d+)$/;
 
 /** Job-family filters exposed through `categories`. */
 const CATEGORY_PATTERNS: Record<string, RegExp> = {
@@ -375,7 +392,10 @@ const ACRONYMS = new Set([
   "sap",
   "seo",
   "sql",
+  "sre",
   "ts",
+  "wfh",
+  "wfo",
   "ui",
   "ux",
   "vpn",
@@ -411,8 +431,8 @@ function titleCase(tokens: string[]): string {
 
 /**
  * The job id starts with `DDMMYY` (for example `111126007762` was posted on
- * 11 Nov 2026). Older ids do not follow the pattern, so an unparseable id
- * simply has no date instead of a wrong one.
+ * 11 Nov 2026). Ids that do not form a valid, non-future calendar date are
+ * left undated.
  */
 export function postedAtFromId(id: string): string | undefined {
   if (!/^\d{12}$/.test(id)) return undefined;
@@ -440,10 +460,10 @@ export function postedAtFromId(id: string): string | undefined {
  * Parses one `job-listings-...` sitemap URL into its posting fields.
  *
  * The slug is `job-listings-{title}-{company}-{locations}-{min}-to-{max}-
- * years-{id}`. Locations are stripped with a city vocabulary, then the company
- * is the tail of what remains, starting at the first employer suffix
- * ("solutions", "technologies", "pvt", ...). When no suffix appears, the last
- * technical keyword ends the title.
+ * years-{id}`. Locations are stripped with a city vocabulary, then the last
+ * role keyword ends the title and the remainder is the employer. A trailing
+ * employer suffix ("solutions", "technologies", "pvt", ...) is treated as the
+ * start of the company rather than the end of the title.
  */
 export function parseJobUrl(loc: string): ParsedJob | undefined {
   const url = loc.trim().replace(/([^:])\/{2,}/g, "$1/");
@@ -487,33 +507,39 @@ export function parseJobUrl(loc: string): ParsedJob | undefined {
 
   if (words.length === 0) return undefined;
 
-  let companyStart = -1;
+  // Mark every token that belongs to a role keyword, including two-word phrases.
+  const tech = new Set<number>();
   for (let index = 0; index < words.length; index += 1) {
-    if (COMPANY_SUFFIX_TOKENS.has(words[index]!)) {
-      companyStart = index;
-      break;
+    if (TECH_TOKEN.test(words[index]!)) tech.add(index);
+    if (
+      index + 1 < words.length &&
+      TECH_PAIRS.has(`${words[index]}-${words[index + 1]}`)
+    ) {
+      tech.add(index);
+      tech.add(index + 1);
     }
   }
+  if (tech.size === 0) return undefined;
 
-  let titleEnd: number;
-  if (companyStart >= 0) {
-    // Walk back over employer words until the title's technical keyword.
-    while (companyStart > 0 && !isTechRole(words[companyStart - 1]!)) {
-      companyStart -= 1;
-    }
-    titleEnd = companyStart - 1;
-    // Keep a role phrase together ("Senior ML Engineer", "Full Stack Developer").
-    while (titleEnd + 1 < companyStart && isTechRole(words[titleEnd + 1]!)) {
-      titleEnd += 1;
-    }
-  } else {
-    titleEnd = -1;
-    for (let index = 0; index < words.length; index += 1) {
-      if (isTechRole(words[index]!)) titleEnd = index;
-    }
+  const techIndices = [...tech].sort((left, right) => left - right);
+  let titleEnd = techIndices[techIndices.length - 1]!;
+
+  // "Acme Software Pvt Ltd" and "Ascendion Engineering" end in an employer
+  // suffix, not a role, so step back to the previous role keyword when there
+  // is one. This keeps "Salesforce Developer | Ascendion Engineering" intact.
+  const after = words[titleEnd + 1];
+  const suffixEndsCompany =
+    COMPANY_SUFFIX_TOKENS.has(words[titleEnd]!) ||
+    (after !== undefined && COMPANY_SUFFIX_TOKENS.has(after));
+  if (suffixEndsCompany) {
+    const previous = techIndices.filter((index) => index < titleEnd).pop();
+    if (previous !== undefined) titleEnd = previous;
   }
 
-  if (titleEnd < 0) return undefined;
+  // Keep trailing modifiers with the title ("Engineer II", "Data Scientist 5 WFO").
+  while (titleEnd + 1 < words.length && TITLE_TAIL.test(words[titleEnd + 1]!)) {
+    titleEnd += 1;
+  }
 
   const titleTokens = words.slice(0, titleEnd + 1);
   while (titleTokens.length > 0 && TITLE_NOISE.has(titleTokens[0]!)) {
@@ -530,7 +556,10 @@ export function parseJobUrl(loc: string): ParsedJob | undefined {
       (token) => !TITLE_NOISE.has(token) && !isTechRole(token),
     );
   }
-  while (companyTokens.length > 0 && /^\d+$/.test(companyTokens[0]!)) {
+  while (
+    companyTokens.length > 0 &&
+    (TITLE_NOISE.has(companyTokens[0]!) || /^\d+$/.test(companyTokens[0]!))
+  ) {
     companyTokens.shift();
   }
   // "Wipro Wipro" and similar repeated slug fragments.
@@ -623,10 +652,10 @@ function freshness(startup: Startup): number {
 /**
  * Naukri.com postings, read from the public job sitemap.
  *
- * Every sitemap entry becomes one technical posting. Entries are deduped by job
- * id, sorted newest-first using the date encoded in the id, and capped at
- * `limit`. A sitemap that fails to load is logged and skipped, so one bad file
- * does not sink the source.
+ * Every technical sitemap entry becomes one posting; non-technical entries are
+ * dropped. Entries are deduped by job id, sorted newest-first using the date
+ * encoded in the id, and capped at `limit`. A sitemap that fails to load is
+ * logged and skipped, so one bad file does not sink the source.
  */
 export async function fetchNaukri(
   config: NaukriConfig = {},
