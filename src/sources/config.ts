@@ -19,6 +19,7 @@ import type { HnConfig } from "./hn.js";
 import type { InternshalaConfig } from "./internshala.js";
 import type { OttaConfig } from "./otta.js";
 import type { ProductHuntConfig } from "./producthunt.js";
+import type { RemoteCoConfig } from "./remoteco.js";
 import type { RemoteOkConfig } from "./remoteok.js";
 import type { RemotiveConfig } from "./remotive.js";
 import type { BaseSourceConfig } from "./types.js";
@@ -63,7 +64,7 @@ export interface HimalayasConfig extends LimitedSourceConfig {
 }
 
 export type { WeWorkRemotelyConfig };
-export type RemoteCoConfig = FeedSourceConfig;
+export type { RemoteCoConfig };
 export type JobspressoConfig = FeedSourceConfig;
 export type TldrJobsConfig = FeedSourceConfig;
 export type ByteByteGoConfig = FeedSourceConfig;
