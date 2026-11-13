@@ -18,12 +18,13 @@ import { domainFromUrl } from "./domain.js";
  *   "location": "Remote (EU)",
  *   "remote": true,
  *   "url": "https://acme.com/jobs/senior-platform-engineer",
- *   "discoveredVia": "yc",
+ *   "discoveredVia": "job_board",
+ *   "jobBoard": "Greenhouse",
  *   "score": 88,
  *   "scoreBreakdown": { "reasons": ["..."], "penalties": [], "relevant": true },
  *   "postedAt": "2026-11-02T09:00:00.000Z",
  *   "discoveredAt": "2026-11-05T09:00:00.000Z",
- *   "sourceUrl": "finder://jobs/finder-job-8842"
+ *   "sourceUrl": null
  * }
  */
 export type HubJobPayload = {
@@ -36,6 +37,8 @@ export type HubJobPayload = {
   remote: boolean;
   url: string;
   discoveredVia: "yc" | "newsfeed" | "job_board" | "google" | "other";
+  /** Display name of the board when `discoveredVia` is "job_board", else null. */
+  jobBoard: string | null;
   score: number;
   scoreBreakdown: Record<string, unknown>;
   postedAt: string | null;
@@ -79,6 +82,46 @@ const DISCOVERED_VIA: Record<SourceId, HubJobPayload["discoveredVia"]> = {
   tldr_jobs: "newsfeed",
   bytebytego: "newsfeed",
   indiehackers: "newsfeed",
+};
+
+/**
+ * Board display names shown in Hub's "Found via" column. Only job-board
+ * discoveries have a board; every other source sends null.
+ *
+ * These are intentionally literals: Hub must never receive a URL, "job_board",
+ * or "jobboard" as the board name.
+ */
+const JOB_BOARD: Record<SourceId, string | null> = {
+  yc: null,
+  funding: null,
+  producthunt: null,
+  google: null,
+  tldr_jobs: null,
+  bytebytego: null,
+  indiehackers: null,
+
+  hn: "Hacker News",
+  remoteok: "Remote OK",
+  remotive: "Remotive",
+  arbeitnow: "Arbeitnow",
+  internshala: "Internshala",
+  unstop: "Unstop",
+  wellfound: "Wellfound",
+  otta: "Otta",
+  workatastartup: "Work at a Startup",
+  himalayas: "Himalayas",
+  weworkremotely: "We Work Remotely",
+  remoteco: "Remote.co",
+  jobspresso: "Jobspresso",
+  ai_jobs_net: "AI Jobs",
+  climatebase: "Climatebase",
+  web3_career: "Web3.career",
+  devrel_careers: "DevRel Careers",
+  naukri: "Naukri",
+  cutshort: "Cutshort",
+  greenhouse: "Greenhouse",
+  lever: "Lever",
+  ashby: "Ashby",
 };
 
 interface HubState {
@@ -372,6 +415,9 @@ export function toHubJob(
   const location = startup.locations.join(", ").trim();
   const rawScore = match.llm?.score ?? match.score;
   const effectiveScore = Number.isFinite(rawScore) ? rawScore : match.score;
+  const discoveredVia = DISCOVERED_VIA[startup.source] ?? "other";
+  const jobBoard =
+    discoveredVia === "job_board" ? (JOB_BOARD[startup.source] ?? null) : null;
 
   return {
     source: "FINDER",
@@ -383,6 +429,7 @@ export function toHubJob(
     remote: Boolean(startup.remote),
     url,
     discoveredVia: DISCOVERED_VIA[startup.source] ?? "other",
+    jobBoard: jobBoard ? truncate(jobBoard, 120) : null,
     score: Math.max(0, Math.min(100, Math.round(effectiveScore))),
     scoreBreakdown: {
       score: match.score,

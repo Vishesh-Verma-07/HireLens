@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { Match, Startup } from "../types.js";
+import { SOURCE_IDS, type Match, type Startup } from "../types.js";
 import { BOARD_HOSTS, toHubJob } from "./jobs.js";
 
 /**
@@ -288,4 +288,50 @@ test("a role phrase starting with a stopword is not used", () => {
   );
 
   assert.equal(payload?.title, "Senior Platform Engineer");
+});
+
+test("job-board discoveries carry the board display name", () => {
+  const hn = toHubJob(match({ companyDomain: "acme.com", source: "hn" }));
+  assert.equal(hn?.discoveredVia, "job_board");
+  assert.equal(hn?.jobBoard, "Hacker News");
+
+  const arbeitnow = toHubJob(
+    match({ companyDomain: "acme.com", source: "arbeitnow" }),
+  );
+  assert.equal(arbeitnow?.jobBoard, "Arbeitnow");
+
+  const web3 = toHubJob(
+    match({ companyDomain: "acme.com", source: "web3_career" }),
+  );
+  assert.equal(web3?.jobBoard, "Web3.career");
+});
+
+test("non-board discoveries send a null jobBoard", () => {
+  for (const source of [
+    "yc",
+    "funding",
+    "producthunt",
+    "google",
+    "tldr_jobs",
+  ] as const) {
+    const payload = toHubJob(match({ companyDomain: "acme.com", source }));
+    assert.equal(payload?.jobBoard, null, source);
+  }
+});
+
+test("every job_board source has a clean display name", () => {
+  for (const source of SOURCE_IDS) {
+    const payload = toHubJob(match({ companyDomain: "acme.com", source }));
+    assert.ok(payload, source);
+
+    if (payload.discoveredVia !== "job_board") {
+      assert.equal(payload.jobBoard, null, source);
+      continue;
+    }
+
+    assert.ok(payload.jobBoard, `${source} must have a board name`);
+    assert.ok(payload.jobBoard.length <= 120, source);
+    assert.doesNotMatch(payload.jobBoard, /^https?:/i, source);
+    assert.doesNotMatch(payload.jobBoard, /^job_?board$/i, source);
+  }
 });
