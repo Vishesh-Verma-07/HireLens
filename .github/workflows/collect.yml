@@ -1,25 +1,24 @@
-# Runs a full collection + ranking pass every 6 hours.
+# Runs a full collection + ranking pass twice a day, at 08:00 and 20:00 IST.
 #
 # This is the freshness job described in Ticket 24. The email bot (bot.yml)
 # sends the digest, but its daily snapshot is cached per day; this workflow
-# exercises every enabled source on a fixed cadence so a broken board shows up
-# in the source health metrics and the run logs long before the next digest.
+# exercises the free sources on a fixed cadence so a broken board shows up
+# in the source health metrics and the run logs before the next digest.
 #
-# It is also the recommended replacement for an always-on collection loop on
-# hosts that cannot keep a process running: GitHub's free runners are enough.
+# Board Scan (the `google` source) is deliberately NOT part of this pass: it is
+# the only quota-limited source, and its one run per day belongs to the digest
+# in bot.yml. This workflow therefore does not forward SERPAPI_KEY / GOOGLE_*
+# and `google` skips, while every other source still runs.
 #
-# Required repository secrets are the optional Board Scan keys only:
-#   SERPAPI_KEY, or GOOGLE_API_KEY + GOOGLE_CSE_ID
-# Hub sync is optional too:
+# Hub sync is optional:
 #   HUB_URL, HUB_API_KEY
-# Without them the `google` source is skipped and every other source still runs.
 
 name: jobfinder collect
 
 on:
   schedule:
-    # Every 6 hours, on the hour (00:00, 06:00, 12:00, 18:00 UTC).
-    - cron: "0 */6 * * *"
+    # Twice a day: 08:00 and 20:00 IST (02:30 and 14:30 UTC).
+    - cron: "30 2,14 * * *"
   workflow_dispatch: {}
 
 concurrency:
@@ -54,14 +53,13 @@ jobs:
         if: steps.nm.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Collect and rank every enabled source
+      - name: Collect and rank the free sources
         env:
           # Makes the digest date and freshness gate use IST, like the bot.
           TZ: Asia/Kolkata
-          # Empty when a secret is absent, so `google` simply skips.
-          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
-          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+          # No SERPAPI_KEY / GOOGLE_* here on purpose: Board Scan is the only
+          # quota-limited source, so its one run per day belongs to the digest
+          # in bot.yml. Without the keys `google` skips and the free sources run.
           # Empty when the secret is absent, so Hub sync simply stays off.
           HUB_URL: ${{ secrets.HUB_URL }}
           HUB_API_KEY: ${{ secrets.HUB_API_KEY }}

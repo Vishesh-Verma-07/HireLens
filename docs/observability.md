@@ -98,7 +98,8 @@ Useful derived panels:
 
 ## Alerting example: two consecutive failed runs
 
-Alert when a source fails on two scheduled runs in a row (runs are every 6h):
+Alert when a source fails on two scheduled runs in a row (the health pass runs
+twice a day on GitHub Actions, every 6 h on a VM):
 
 1. Query `sum(source.failure)` grouped by `source_id`.
 2. Fire when the value is `> 0` for the same `source_id` on two consecutive

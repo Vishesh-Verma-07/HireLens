@@ -10,9 +10,11 @@
 #     ~1,400 min/month, comfortably inside the free allowance.
 #
 # IMPORTANT: GitHub's scheduler is best-effort and *will* delay or skip ticks
-# under load. We therefore don't wait for a specific hour: MAIL_DAILY_HOUR=0
-# means the digest goes out on the first run after local midnight, and the
-# mailbox de-dup guard makes that safe no matter how many runs happen.
+# under load. We still target a morning digest: MAIL_DAILY_HOUR=7 means the
+# digest leaves on the first run at or after 07:00 IST, so a delayed tick only
+# delays the email instead of skipping the day. Because the digest snapshot is
+# built at send time, the email reflects what the boards had that morning. The
+# mailbox de-dup guard makes repeated or late runs safe.
 #
 # Required repository secrets (Settings → Secrets and variables → Actions):
 #   SMTP_USER, SMTP_PASS, MAIL_FROM, MAIL_TO
@@ -76,7 +78,7 @@ jobs:
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           MAIL_FROM: ${{ secrets.MAIL_FROM }}
           MAIL_TO: ${{ secrets.MAIL_TO }}
-          MAIL_DAILY_HOUR: "0"
+          MAIL_DAILY_HOUR: "7"
           MAIL_POLL_MINUTES: "30"
           # Empty when the secret is absent, so `google` simply skips.
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}

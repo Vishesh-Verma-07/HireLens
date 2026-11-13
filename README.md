@@ -129,10 +129,10 @@ the copy-paste test template.
 Collection is a normal CLI run, so any scheduler can drive it:
 
 - **GitHub Actions** — `.github/workflows/collect.yml` runs
-  `npm run match -- --all --limit 25` every 6 hours
-  (`cron: "0 */6 * * *"`) and on manual dispatch. It needs no secrets unless
-  you want Google results (`SERPAPI_KEY`, or `GOOGLE_API_KEY` +
-  `GOOGLE_CSE_ID`).
+  `npm run match -- --all --limit 25` twice a day, at 08:00 and 20:00 IST
+  (`cron: "30 2,14 * * *"`), and on manual dispatch. It intentionally omits the
+  Board Scan keys, so the `google` source skips: that quota belongs to the daily
+  digest run. Set `HUB_URL`/`HUB_API_KEY` to sync this pass to Hub.
 - **systemd timer** — `deploy/jobfinder-collect.service` and
   `deploy/jobfinder-collect.timer` do the same on an always-on VM every 6 hours
   (`OnCalendar=*-*-* 00/6:00:00`). Install them next to the bot unit:
@@ -327,11 +327,13 @@ Google results in the digest, also add `SERPAPI_KEY`, or `GOOGLE_API_KEY` +
 confirm.
 
 **Caveat: GitHub's cron is best-effort.** Ticks are delayed and sometimes
-skipped under load (we saw a multi-hour gap on the first day). So the workflow
-sets `MAIL_DAILY_HOUR=0`: the digest goes out on the *first run after local
-midnight*, rather than at a fixed 8 AM that may never fire. The mailbox de-dup
-guard makes repeated runs safe. If you need guaranteed timing or fast replies,
-use Option B (a real VM) instead.
+skipped under load (we saw a multi-hour gap on the first day). The workflow
+therefore sets `MAIL_DAILY_HOUR=7`: the digest goes out on the *first run at or
+after 07:00 IST*, so a delayed tick delays the email a little instead of
+skipping the day. The digest snapshot is built at send time, so the email
+reflects what the boards had that morning. The mailbox de-dup guard makes
+repeated runs safe. If you need guaranteed timing or fast replies, use Option B
+(a real VM) instead.
 
 ### Option B — a free always-on VM ($0, instant replies)
 
