@@ -19,6 +19,9 @@
 #
 # Board Scan (optional, but needed for Google results in the digest):
 #   SERPAPI_KEY, or GOOGLE_API_KEY + GOOGLE_CSE_ID
+#
+# Hub dashboard sync (optional):
+#   HUB_URL, HUB_API_KEY
 
 name: jobfinder bot
 
@@ -79,6 +82,9 @@ jobs:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+          # Empty when the secret is absent, so Hub sync simply stays off.
+          HUB_URL: ${{ secrets.HUB_URL }}
+          HUB_API_KEY: ${{ secrets.HUB_API_KEY }}
         run: npm run bot:once
 
       - name: Keep the schedule alive

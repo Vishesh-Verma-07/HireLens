@@ -10,6 +10,8 @@
 #
 # Required repository secrets are the optional Board Scan keys only:
 #   SERPAPI_KEY, or GOOGLE_API_KEY + GOOGLE_CSE_ID
+# Hub sync is optional too:
+#   HUB_URL, HUB_API_KEY
 # Without them the `google` source is skipped and every other source still runs.
 
 name: jobfinder collect
@@ -60,6 +62,9 @@ jobs:
           SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
           GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+          # Empty when the secret is absent, so Hub sync simply stays off.
+          HUB_URL: ${{ secrets.HUB_URL }}
+          HUB_API_KEY: ${{ secrets.HUB_API_KEY }}
           # One JSON line per metric sample, so the run log doubles as a
           # source-health record (see docs/observability.md).
           METRICS_LOG: "1"

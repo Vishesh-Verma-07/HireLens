@@ -114,17 +114,118 @@ function latestSignalDate(startup: Startup): string | null {
   return latest === undefined ? null : new Date(latest).toISOString();
 }
 
+/**
+ * Hosts that belong to job boards, aggregators, and ATS vendors rather than to
+ * the hiring company.
+ *
+ * A posting URL is almost always one of these, so using it as `companyDomain`
+ * would create junk companies in Hub. Entries are matched against the hostname
+ * and every subdomain of it (`boards.greenhouse.io` also covers
+ * `job-boards.greenhouse.io`).
+ */
+export const BOARD_HOSTS: readonly string[] = [
+  "news.ycombinator.com",
+  "ycombinator.com",
+  "hn.algolia.com",
+  "internshala.com",
+  "unstop.com",
+  "linkedin.com",
+  "remoteok.com",
+  "remotive.com",
+  "arbeitnow.com",
+  "wellfound.com",
+  "otta.com",
+  "workatastartup.com",
+  "himalayas.app",
+  "weworkremotely.com",
+  "remote.co",
+  "jobspresso.co",
+  "web3.career",
+  "naukri.com",
+  "cutshort.io",
+  "jooble.org",
+  "boards.greenhouse.io",
+  "job-boards.greenhouse.io",
+  "greenhouse.io",
+  "jobs.lever.co",
+  "lever.co",
+  "jobs.ashbyhq.com",
+  "ashbyhq.com",
+  "producthunt.com",
+];
+
+/** True when `domain` is a board host or a subdomain of one. */
+function isBoardDomain(domain: string): boolean {
+  return BOARD_HOSTS.some(
+    (host) => domain === host || domain.endsWith(`.${host}`),
+  );
+}
+
+/** Normalized domain for `raw`, unless it is missing or a board host. */
+function employerDomainFrom(raw: string | undefined): string | undefined {
+  const domain = domainFromUrl(raw);
+  return domain && !isBoardDomain(domain) ? domain : undefined;
+}
+
+/**
+ * Matches `http(s)://` URLs and email addresses in free text. URLs come first
+ * so a `mailto:`-style token is read once, as a URL.
+ */
+const DESCRIPTION_LINK =
+  /https?:\/\/[^\s<>"'`]+|[a-z0-9._%+-]+@[a-z0-9-]+(?:\.[a-z0-9-]+)+/gi;
+
+/** Trailing punctuation that ends a sentence rather than a link. */
+const TRAILING_PUNCTUATION = /[.,;:!?)\]}'"]+$/;
+
+/**
+ * Domains mentioned in a posting's description, in order of appearance.
+ *
+ * Board postings keep the employer's own site or email in the body while
+ * `url` only points at the listing, so this is where a real company domain is
+ * usually found.
+ */
+function descriptionDomains(description: string | undefined): string[] {
+  if (!description) return [];
+
+  const domains: string[] = [];
+  for (const match of description.matchAll(DESCRIPTION_LINK)) {
+    const token = match[0].replace(TRAILING_PUNCTUATION, "");
+    if (!token) continue;
+
+    // Keep only the host part of an email; leave URLs untouched so userinfo
+    // (`https://user@host`) is not mistaken for an address.
+    const raw = /^https?:\/\//i.test(token)
+      ? token
+      : token.slice(token.lastIndexOf("@") + 1);
+
+    const domain = domainFromUrl(raw);
+    if (domain) domains.push(domain);
+  }
+
+  return domains;
+}
+
+/**
+ * Pick the hiring company's own domain for the Hub payload.
+ *
+ * Order: an explicit domain from the source, then links/emails in the
+ * description, then the posting URL, then signal URLs. Board hosts are
+ * rejected at every step; when nothing survives the job is skipped rather
+ * than attributed to the board or an invented domain.
+ */
 function companyDomainFor(startup: Startup): string | undefined {
-  // Prefer an explicit domain when a source knows it, then the company/job
-  // URL, then any signal URL.
-  const candidates = [
-    startup.companyDomain,
+  const explicit = employerDomainFrom(startup.companyDomain);
+  if (explicit) return explicit;
+
+  for (const domain of descriptionDomains(startup.description)) {
+    if (!isBoardDomain(domain)) return domain;
+  }
+
+  for (const candidate of [
     startup.url,
     ...startup.signals.map((signal) => signal.url),
-  ];
-
-  for (const candidate of candidates) {
-    const domain = domainFromUrl(candidate);
+  ]) {
+    const domain = employerDomainFrom(candidate);
     if (domain) return domain;
   }
 
