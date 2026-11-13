@@ -12,6 +12,7 @@
  */
 
 import type { SourceId } from "../types.js";
+import type { AiJobsNetConfig } from "./aijobs.js";
 import type { ArbeitnowConfig } from "./arbeitnow.js";
 import type { FundingConfig } from "./funding.js";
 import type { GoogleSourceConfig } from "./google.js";
@@ -70,7 +71,7 @@ export type TldrJobsConfig = FeedSourceConfig;
 export type ByteByteGoConfig = FeedSourceConfig;
 export type IndieHackersConfig = FeedSourceConfig;
 
-export type AiJobsNetConfig = LimitedSourceConfig;
+export type { AiJobsNetConfig };
 export type ClimatebaseConfig = LimitedSourceConfig;
 export type Web3CareerConfig = LimitedSourceConfig;
 export type DevRelCareersConfig = LimitedSourceConfig;

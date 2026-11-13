@@ -168,6 +168,25 @@ test("board hosts reject their own subdomains", () => {
   );
 });
 
+test("foorilla (ai-jobs.net) postings are board-only and skipped", () => {
+  for (const host of ["foorilla.com", "ai-jobs.net"]) {
+    const boardOnly = match({
+      source: "ai_jobs_net",
+      url: `https://${host}/hiring/jobs/senior-ai-engineer-4124346/`,
+      description: "Compensation: USD 150K-200K\n\nSkills: Python, PyTorch",
+      signals: [
+        {
+          type: "hiring",
+          url: `https://${host}/hiring/jobs/senior-ai-engineer-4124346/`,
+        },
+      ],
+    });
+
+    assert.ok(BOARD_HOSTS.includes(host), `${host} should be a board host`);
+    assert.equal(toHubJob(boardOnly), undefined, `${host} must not become a company`);
+  }
+});
+
 test("sourceUrl is null — never a finder:// deep link", () => {
   const payload = toHubJob(match({ companyDomain: "acme.com" }));
 

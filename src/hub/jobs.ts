@@ -199,6 +199,8 @@ export const BOARD_HOSTS: readonly string[] = [
   "archive.ph",
   "applytojob.com",
   "arbeitnow.ch",
+  "foorilla.com",
+  "ai-jobs.net",
 ];
 
 /** True when `domain` is a board host or a subdomain of one. */

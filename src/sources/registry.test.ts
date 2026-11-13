@@ -53,6 +53,7 @@ test("discovers every built-in source without editing index.ts", async () => {
   assert.deepEqual(
     sources.map((source) => source.id).sort(),
     [
+      "ai_jobs_net",
       "arbeitnow",
       "ashby",
       "cutshort",
