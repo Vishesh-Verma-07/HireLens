@@ -42,10 +42,26 @@ public and this tool is independent.
 
 Scope is **matching only** — no email sending to founders.
 
-- **Sources** (public, no auth): **YC** company directory, **HN** "Who is
-  hiring?" thread, **funding** RSS feeds, **Product Hunt** launches, plus fresh
-  job boards — **RemoteOK**, **Remotive**, **Arbeitnow**, and India-focused
-  **Internshala** + **Unstop**.
+- **Sources** (public, no auth), 23 implemented:
+  - *Signals*: **YC** company directory, **HN** "Who is hiring?" thread,
+    **funding** RSS feeds, **Product Hunt** launches, **Google** Board Scan
+    (see below).
+  - *Global job boards*: **RemoteOK**, **Remotive**, **Arbeitnow**,
+    **Wellfound**, **Otta**, **Work at a Startup** (YC), **Himalayas**,
+    **We Work Remotely**, **Remote.co**, **Jobspresso**.
+  - *India-focused*: **Internshala**, **Unstop**, **Naukri** (opt-in, reads the
+    public job sitemap), **Cutshort** (opt-in).
+  - *Niche*: **Web3.career** (crypto/web3).
+  - *Company career pages*: **Greenhouse**, **Lever**, **Ashby** (opt-in; list
+    the company slugs under `companies` in `config/sources.yaml`).
+  - *Pending*: **TLDR Jobs**, **AI Jobs**, **Climatebase** and
+    **DevRel.careers** have config blocks but no module yet, so a run warns and
+    skips them instead of failing. **ByteByteGo** and **Indie Hackers** are
+    also unimplemented and stay disabled until they publish a stable public
+    feed.
+- **Source attribution** — every digest line credits the board(s) a match came
+  from (`wellfound + remoteok`). It reads `Startup.sources`, which cross-source
+  dedupe fills in, so a merged role never hides where it was found.
 - **Board Scan (Google)** — compiles the profile into Google queries that
   target ATS domains directly, for boards that don't expose a feed. It searches
   each query through SerpAPI or Google Custom Search, turns every usable result
@@ -107,6 +123,56 @@ Source tests never hit the network: each one replays a recorded response from
 `test/fixtures/<source>.json` and then runs the shared contract check
 (`assertValidStartups`). See `test/fixtures/README.md` for the fixture format and
 the copy-paste test template.
+
+### Scheduled collection
+
+Collection is a normal CLI run, so any scheduler can drive it:
+
+- **GitHub Actions** — `.github/workflows/collect.yml` runs
+  `npm run match -- --all --limit 25` every 6 hours
+  (`cron: "0 */6 * * *"`) and on manual dispatch. It needs no secrets unless
+  you want Google results (`SERPAPI_KEY`, or `GOOGLE_API_KEY` +
+  `GOOGLE_CSE_ID`).
+- **systemd timer** — `deploy/jobfinder-collect.service` and
+  `deploy/jobfinder-collect.timer` do the same on an always-on VM every 6 hours
+  (`OnCalendar=*-*-* 00/6:00:00`). Install them next to the bot unit:
+
+  ```bash
+  sudo cp deploy/jobfinder-collect.* /etc/systemd/system/
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now jobfinder-collect.timer
+  ```
+
+- **Vercel Cron** — point a cron job at a Function that calls
+  `collectStartups()`; the same `src/sources/index.ts` entry point works there,
+  and `source.*` metrics flow into Vercel Custom Metrics automatically (see
+  [`docs/observability.md`](docs/observability.md)).
+
+`--all` ignores the 30-day seen store so a scheduled pass always shows what the
+sources currently return. The systemd pass also adds `--no-write`: it collects
+and ranks but never writes the shared seen store, so it cannot mark roles as
+seen before the email bot has sent them. The email bot still owns the digest and
+de-duplication.
+
+### Enable or disable a source
+
+Every source is controlled from `config/sources.yaml`; no code change is needed.
+
+```yaml
+sources:
+  remoteok:
+    enabled: true      # false removes it from the next run
+    limit: 100         # per-source cap
+```
+
+- A missing block runs the source with its defaults.
+- `enabled: false` skips the source entirely.
+- Unknown or not-yet-implemented ids log a warning; the rest of the run
+  continues.
+- `npm run match -- --source yc,hn` restricts one run without editing the file.
+
+Defaults for the newer sources (feed URLs, limits, categories) live in
+`SOURCE_DEFAULTS` in `src/sources/config.ts`.
 
 ### Board Scan — Google results in the digest
 
@@ -319,7 +385,7 @@ src/
   agent/agent.ts        # transport-agnostic command core + daily snapshot
   profile.ts            # profile.yaml → Profile
   types.ts              # Signal / Startup / Profile / Match
-  sources/              # yc, hn, funding, producthunt, remoteok, remotive, arbeitnow, internshala, unstop, google
+  sources/              # every source module (23 today), auto-discovered
   sources/registry.ts   # auto-discovers modules that export sourceId + fetch{Name}
   sources/google.ts     # Google results API → ATS Startups
   scan/                 # Google-only query compiler + `npm run scan`
@@ -328,7 +394,7 @@ src/
   match/llm.ts          # optional LLM re-rank
   lib/dedupe.ts         # cross-source role matching + stable dedupe keys
   store/db.ts           # seen-store for cross-run dedupe (30-day TTL)
-  report/digest.ts      # Markdown / text / HTML renderers
+  report/digest.ts      # Markdown / text / HTML renderers + source attribution
   channels/email/       # config, mailer (SMTP+IMAP), bot loop
   lib/metrics.ts        # per-source health metrics (Vercel Custom Metrics + JSON logs)
 test/
@@ -338,33 +404,38 @@ test/
 scripts/record-fixture.ts # `npm run record:fixture <source>`
 config/sources.yaml     # which sources, which feeds, YC options
 profile/profile.yaml    # YOUR profile  ← the "for me only" file
+deploy/jobfinder.service        # systemd unit for the email bot
+deploy/jobfinder-collect.*      # systemd unit + timer for the 6-hour collection
+.github/workflows/bot.yml       # 30-minute bot pass
+.github/workflows/collect.yml   # 6-hour collection pass
 .env.example            # mail + Google search credentials template
 docs/observability.md   # metric catalog, dashboards, alerting
 ```
 
-### Adding a source
+### Adding a source (5 steps)
 
-Drop one file into `src/sources/` that exports `sourceId`, a `<Name>Config`
-type, and a `fetch<Name>(config, context)` function. The registry discovers it
-on the next run — there is no `index.ts` import to add. Helpers (no `sourceId`)
-and `*.test.ts` files are ignored. Add the id to the `SourceId` union in
-`src/types.ts`, and tune it in `config/sources.yaml` if it needs non-default
-settings. The header of `src/sources/registry.ts` has a copy-paste template.
+1. **Create the module.** Drop one file into `src/sources/` (for example
+   `newboard.ts`) exporting `sourceId`, a `<Name>Config` type, and a
+   `fetch<Name>(config, context)` function. The header of
+   `src/sources/registry.ts` has a copy-paste template. Helpers (no `sourceId`)
+   and `*.test.ts` files are ignored by the registry.
+2. **Register the id.** Add it to `SOURCE_IDS` in `src/types.ts` (which derives
+   `SourceId`), then to `SourceSettingsMap` and `SOURCE_DEFAULTS` in
+   `src/sources/config.ts` if it needs defaults.
+3. **Configure it.** Add a block under `sources:` in `config/sources.yaml`.
+   `enabled: false` keeps it off; missing keys fall back to `SOURCE_DEFAULTS`.
+   See [Enable or disable a source](#enable-or-disable-a-source).
+4. **Record a fixture.** `npm run record:fixture newboard` writes
+   `test/fixtures/newboard.json` from one live response.
+5. **Add the test.** Copy the template from `test/fixtures/README.md` into
+   `src/sources/newboard.test.ts`. It replays the fixture through the real
+   fetch function and calls `assertValidStartups(startups, "newboard")`, which
+   enforces the `{source}:{id}` id format, non-empty signals, valid
+   `SignalType`s, and ISO dates. Run `npm test`.
+
 Cross-source dedupe and `sources` attribution happen in `collectStartups`, so a
-source only has to emit its own source-prefixed ids.
-
-Every source also gets a test. Record its fixture once, then copy the template
-from `test/fixtures/README.md` into `src/sources/<source>.test.ts`:
-
-```bash
-npm run record:fixture newboard
-npm test
-```
-
-The test replays the fixture through the real fetch function and calls
-`assertValidStartups(startups, "newboard")`, which enforces the
-`{source}:{id}` id format, non-empty signals, valid `SignalType`s, and ISO dates.
-That is usually a 2-minute loop for a new source.
+source only has to emit its own source-prefixed ids. The digest then credits
+every board that contributed a merged role (`wellfound + remoteok`).
 
 ### Source health metrics
 

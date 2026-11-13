@@ -1,0 +1,28 @@
+# One collection + ranking pass, started by jobfinder-collect.timer every
+# 6 hours. Use this on an always-on VM that already runs the email bot
+# (deploy/jobfinder.service) or on its own.
+#
+#   1. sudo cp deploy/jobfinder-collect.* /etc/systemd/system/
+#   2. sudo systemctl daemon-reload
+#   3. sudo systemctl enable --now jobfinder-collect.timer
+#   4. systemctl list-timers jobfinder-collect.timer   # next run
+#   5. journalctl -u jobfinder-collect -f              # tail the logs
+#
+# Adjust User/WorkingDirectory and the node path to match the box.
+
+[Unit]
+Description=jobfinder collection run
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=jobfinder
+WorkingDirectory=/opt/jobfinder
+EnvironmentFile=/opt/jobfinder/.env
+# `--all` ignores the cross-run seen store so every scheduled pass sees the full
+# set of fresh postings. `--no-write` keeps this pass from writing that store:
+# otherwise it would mark its top 25 as seen and the email bot would suppress
+# roles it never sent for 30 days. Collection is the job here; the bot owns the
+# digest and the seen-store.
+ExecStart=/usr/bin/npx tsx src/index.ts --all --no-write --limit 25

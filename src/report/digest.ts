@@ -1,5 +1,18 @@
-import type { Match, Profile } from "../types.js";
+import type { Match, Profile, Startup } from "../types.js";
 import { localDate } from "../lib/date.js";
+
+/**
+ * Which board(s) a match came from, for the digest.
+ *
+ * `sources` is populated by cross-source dedupe and lists every board that
+ * contributed the same role; a record that only one board supplied falls back
+ * to its own `source`. Joining with " + " makes a merged role visible instead
+ * of crediting whichever board happened to win the merge.
+ */
+export function sourceAttribution(startup: Startup): string {
+  const sources = startup.sources?.length ? startup.sources : [startup.source];
+  return sources.join(" + ");
+}
 
 function fmtAmount(usd: number | undefined): string {
   if (!usd) return "";
@@ -39,7 +52,7 @@ function metaLine(m: Match): string {
   const s = m.startup;
   return [
     s.stage ?? "stage?",
-    s.source,
+    sourceAttribution(s),
     s.remote ? "remote" : s.locations.join(", ") || "location?",
     linkOrDash(s.url),
   ].join(" · ");
@@ -97,6 +110,7 @@ export function renderDigestText(
     out.push(`${n}. ${m.startup.name} — ${score(m)}/100`);
     if (m.startup.oneLiner) out.push(`   ${m.startup.oneLiner}`);
     out.push(`   ${m.startup.url ?? "—"}`);
+    out.push(`   Source: ${sourceAttribution(m.startup)}`);
     if (m.reasons.length) out.push(`   Why: ${m.reasons.join("; ")}`);
     if (m.penalties.length) out.push(`   Watch: ${m.penalties.join("; ")}`);
     out.push("");
@@ -148,7 +162,11 @@ function cardHtml(m: Match, index: number): string {
     </div>
     ${s.oneLiner ? `<div style="color:#475569;font-size:13px;margin:4px 0">${esc(s.oneLiner)}</div>` : ""}
     <div style="color:#94a3b8;font-size:12px;margin:4px 0">${esc(
-      [s.stage ?? "stage?", s.source, s.remote ? "remote" : s.locations.join(", ") || "location?"].join(" · "),
+      [
+        s.stage ?? "stage?",
+        sourceAttribution(s),
+        s.remote ? "remote" : s.locations.join(", ") || "location?",
+      ].join(" · "),
     )}</div>
     ${why}${watch}${sigHtml}
     <div style="margin-top:6px">${link}</div>

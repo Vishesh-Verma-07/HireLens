@@ -1,0 +1,68 @@
+# Runs a full collection + ranking pass every 6 hours.
+#
+# This is the freshness job described in Ticket 24. The email bot (bot.yml)
+# sends the digest, but its daily snapshot is cached per day; this workflow
+# exercises every enabled source on a fixed cadence so a broken board shows up
+# in the source health metrics and the run logs long before the next digest.
+#
+# It is also the recommended replacement for an always-on collection loop on
+# hosts that cannot keep a process running: GitHub's free runners are enough.
+#
+# Required repository secrets are the optional Board Scan keys only:
+#   SERPAPI_KEY, or GOOGLE_API_KEY + GOOGLE_CSE_ID
+# Without them the `google` source is skipped and every other source still runs.
+
+name: jobfinder collect
+
+on:
+  schedule:
+    # Every 6 hours, on the hour (00:00, 06:00, 12:00, 18:00 UTC).
+    - cron: "0 */6 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  # A collection pass is read-mostly; never let two overlap.
+  group: jobfinder-collect
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Cache node_modules
+        id: nm
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: nm-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.nm.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Collect and rank every enabled source
+        env:
+          # Makes the digest date and freshness gate use IST, like the bot.
+          TZ: Asia/Kolkata
+          # Empty when a secret is absent, so `google` simply skips.
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GOOGLE_CSE_ID: ${{ secrets.GOOGLE_CSE_ID }}
+          # One JSON line per metric sample, so the run log doubles as a
+          # source-health record (see docs/observability.md).
+          METRICS_LOG: "1"
+        # `--all` ignores the cross-run seen store so the run always shows what
+        # the sources return, not just roles that are new since yesterday.
+        run: npm run match -- --all --limit 25

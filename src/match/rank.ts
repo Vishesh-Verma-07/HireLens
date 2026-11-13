@@ -48,6 +48,11 @@ export function rankStartups(
       continue;
     }
     // Merge signals and fill in missing fields from the duplicate.
+    const sources = new Set([
+      ...(existing.sources?.length ? existing.sources : [existing.source]),
+      ...(s.sources?.length ? s.sources : [s.source]),
+    ]);
+    existing.sources = [...sources];
     existing.signals.push(...s.signals);
     existing.locations = [...new Set([...existing.locations, ...s.locations])];
     existing.industry = [...new Set([...existing.industry, ...s.industry])];
