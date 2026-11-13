@@ -42,7 +42,7 @@ public and this tool is independent.
 
 Scope is **matching only** — no email sending to founders.
 
-- **Sources** (public, no auth), 23 implemented:
+- **Sources** (public, no auth), 24 implemented:
   - *Signals*: **YC** company directory, **HN** "Who is hiring?" thread,
     **funding** RSS feeds, **Product Hunt** launches, **Google** Board Scan
     (see below).
@@ -51,14 +51,14 @@ Scope is **matching only** — no email sending to founders.
     **We Work Remotely**, **Remote.co**, **Jobspresso**.
   - *India-focused*: **Internshala**, **Unstop**, **Naukri** (opt-in, reads the
     public job sitemap), **Cutshort** (opt-in).
-  - *Niche*: **Web3.career** (crypto/web3).
+  - *Niche*: **Web3.career** (crypto/web3), **AI Jobs** (ai-jobs.net, which now
+    redirects to foorilla.com).
   - *Company career pages*: **Greenhouse**, **Lever**, **Ashby** (opt-in; list
     the company slugs under `companies` in `config/sources.yaml`).
-  - *Pending*: **TLDR Jobs**, **AI Jobs**, **Climatebase** and
-    **DevRel.careers** have config blocks but no module yet, so a run warns and
-    skips them instead of failing. **ByteByteGo** and **Indie Hackers** are
-    also unimplemented and stay disabled until they publish a stable public
-    feed.
+  - *Pending*: **TLDR Jobs**, **Climatebase** and **DevRel.careers** have
+    config blocks but no module yet, so a run warns and skips them instead of
+    failing. **ByteByteGo** and **Indie Hackers** are also unimplemented and
+    stay disabled until they publish a stable public feed.
 - **Source attribution** — every digest line credits the board(s) a match came
   from (`wellfound + remoteok`). It reads `Startup.sources`, which cross-source
   dedupe fills in, so a merged role never hides where it was found.
@@ -385,7 +385,7 @@ src/
   agent/agent.ts        # transport-agnostic command core + daily snapshot
   profile.ts            # profile.yaml → Profile
   types.ts              # Signal / Startup / Profile / Match
-  sources/              # every source module (23 today), auto-discovered
+  sources/              # every source module (24 today), auto-discovered
   sources/registry.ts   # auto-discovers modules that export sourceId + fetch{Name}
   sources/google.ts     # Google results API → ATS Startups
   scan/                 # Google-only query compiler + `npm run scan`
