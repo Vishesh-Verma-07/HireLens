@@ -152,6 +152,10 @@ export const BOARD_HOSTS: readonly string[] = [
   "jobs.ashbyhq.com",
   "ashbyhq.com",
   "producthunt.com",
+  "mercurynews.com",
+  "archive.ph",
+  "applytojob.com",
+  "arbeitnow.ch",
 ];
 
 /** True when `domain` is a board host or a subdomain of one. */
@@ -232,13 +236,96 @@ function companyDomainFor(startup: Startup): string | undefined {
   return undefined;
 }
 
-function finderUrl(sourceId: string): string | null {
-  const value = `finder://jobs/${encodeURIComponent(sourceId)}`;
-  try {
-    return new URL(value).toString();
-  } catch {
-    return null;
+/**
+ * A single role written in title case, e.g. "Senior Backend Engineer".
+ *
+ * The optional prefix and the short run of capitals keep the match to a
+ * phrase rather than swallowing a whole sentence, and only `Engineer`,
+ * `Developer`, and similar nouns count as the role itself.
+ */
+const ROLE_PHRASE =
+  /((?:Senior|Staff|Principal|Lead|Junior|Founding|Sr\.?|Jr\.?)\s+)?([A-Z][\w/&+.-]*(?:\s+[\w/&+.-]+){0,2}?\s+(?:Engineer|Developer|Designer|Manager|Scientist|Analyst|Architect|Researcher|Specialist|Programmer))/g;
+
+const ROLE_WORD =
+  /\b(engineer|developer|designer|manager|scientist|analyst|architect|researcher|specialist|programmer)\b/i;
+
+/** Words that describe where a job is, not what it is. */
+const LOCATION_FLAG = /\b(remote|hybrid|on-?site|in[- ]person|wfh|work from home)\b/i;
+
+/** "Philadelphia / NYC / Toronto" — a list of places, not a role. */
+const CITY_LIST = /^[A-Z][A-Za-z .'-]+(?:\s*\/\s*[A-Z][A-Za-z .'-]+)+$/;
+
+/** "Tokyo, Japan" is a place; "Security, Machine Learning" is not. */
+const CITY_COUNTRY = /^[A-Z][A-Za-z .'-]+,\s*([A-Za-z ]+?)(?:\s*\([^)]*\))?$/;
+const COUNTRY_HINTS = new Set([
+  "usa", "us", "uk", "united kingdom", "united states", "canada", "india",
+  "germany", "france", "netherlands", "spain", "italy", "portugal", "poland",
+  "sweden", "norway", "denmark", "finland", "switzerland", "austria",
+  "belgium", "ireland", "israel", "japan", "china", "singapore", "australia",
+  "new zealand", "brazil", "mexico", "argentina", "chile", "colombia",
+  "czech republic", "czechia", "hungary", "romania", "bulgaria", "greece",
+  "turkey", "uae", "united arab emirates", "south korea", "korea", "taiwan",
+  "hong kong", "indonesia", "malaysia", "philippines", "vietnam", "thailand",
+  "south africa", "nigeria", "kenya", "egypt", "saudi arabia", "qatar",
+]);
+
+/** True when a "City, Country" title names a place instead of a role. */
+function isCityCountry(title: string): boolean {
+  const match = title.match(CITY_COUNTRY);
+  return Boolean(match?.[1] && COUNTRY_HINTS.has(match[1].trim().toLowerCase()));
+}
+
+/** True when the subject line can be sent as a Hub `title` unchanged. */
+function isUsableTitle(value: string, startup: Startup): boolean {
+  const title = value.trim();
+  if (!title || title.length > 100) return false;
+  if (/\b(multiple|various|all|several)\s+roles\b/i.test(title)) return false;
+  if (LOCATION_FLAG.test(title) && !ROLE_WORD.test(title)) return false;
+  if (CITY_LIST.test(title)) return false;
+  if (isCityCountry(title)) return false;
+
+  return !startup.locations.some(
+    (location) => location.trim().toLowerCase() === title.toLowerCase(),
+  );
+}
+
+/** First role-shaped phrase in a description, e.g. from "• Senior SRE". */
+function roleFromDescription(description: string | undefined): string | undefined {
+  if (!description) return undefined;
+
+  for (const segment of description.slice(0, 6000).split(/[|\n•]+/)) {
+    for (const match of segment.matchAll(ROLE_PHRASE)) {
+      const title = `${match[1] ?? ""}${match[2] ?? ""}`
+        .replace(/^[\s\-*–—]+/, "")
+        .replace(/[\s,;:.\-–—]+$/, "")
+        .trim();
+
+      if (!title || title.length > 100) continue;
+      if (/^(the|a|an|our|we|this|your|their|its)\b/i.test(title)) continue;
+      // "Staff SWEs in NYC. Engineer" is a sentence fragment, not a role.
+      if (/[.!?]\s/.test(title)) continue;
+      if (/\b(in|at|for|with|and|to|of|is|are|we|our|you|your|on|via)\b/.test(match[2] ?? "")) continue;
+      return title;
+    }
   }
+
+  return undefined;
+}
+
+/**
+ * Hub shows `title` as the role, so a location, a paragraph, or "Multiple
+ * roles" must not reach it. Fall back to the first role named in the
+ * description, then to the company name when the posting names no single role.
+ */
+function hubTitle(startup: Startup): string | undefined {
+  const raw = (startup.oneLiner ?? "").trim();
+  if (raw && isUsableTitle(raw, startup)) return truncate(raw, 300);
+
+  const fromDescription = roleFromDescription(startup.description);
+  if (fromDescription) return truncate(fromDescription, 300);
+
+  const name = startup.name.trim();
+  return name ? truncate(name, 300) : undefined;
 }
 
 /**
@@ -267,7 +354,7 @@ export function toHubJob(
     return undefined;
   }
 
-  const title = truncate(startup.oneLiner?.trim() || startup.name.trim(), 300);
+  const title = hubTitle(startup);
   if (!title) {
     logger.warn(`hub: skipping ${rawId} — no job title`);
     return undefined;
@@ -306,7 +393,9 @@ export function toHubJob(
     },
     postedAt: latestSignalDate(startup),
     discoveredAt,
-    sourceUrl: finderUrl(sourceId),
+    // Hub opens `url`; Finder has no web UI, so there is no browser-openable
+    // record page and a `finder://` deep link must never be sent.
+    sourceUrl: null,
   };
 }
 

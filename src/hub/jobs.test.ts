@@ -167,3 +167,125 @@ test("board hosts reject their own subdomains", () => {
     undefined,
   );
 });
+
+test("sourceUrl is null — never a finder:// deep link", () => {
+  const payload = toHubJob(match({ companyDomain: "acme.com" }));
+
+  assert.equal(payload?.sourceUrl, null);
+});
+
+test("url is an absolute http(s) posting, never finder://", () => {
+  const payload = toHubJob(
+    match({
+      companyDomain: "acme.com",
+      url: "finder://jobs/hn%3Aacme",
+      signals: [
+        { type: "hiring", url: "https://news.ycombinator.com/item?id=1" },
+      ],
+    }),
+  );
+
+  assert.equal(payload?.url, "https://news.ycombinator.com/item?id=1");
+});
+
+test("a location-shaped oneLiner is replaced by the role in the description", () => {
+  const payload = toHubJob(
+    match({
+      id: "hn:viva-finance",
+      name: "VIVA Finance",
+      companyDomain: "viva-finance.com",
+      oneLiner: "Atlanta, GA (In Person)",
+      locations: ["Atlanta, GA (In Person)", "Remote"],
+      description:
+        "VIVA Finance | Atlanta, GA (In Person) | Front-End + Mobile Developer VIVA is a " +
+        "Fintech Startup based in Atlanta, GA with the mission to build a more inclusive " +
+        "financial system.",
+    }),
+  );
+
+  assert.equal(payload?.title, "Front-End + Mobile Developer");
+});
+
+test('"Multiple roles" is replaced by the first role listed', () => {
+  const payload = toHubJob(
+    match({
+      id: "hn:coder",
+      name: "Coder",
+      companyDomain: "coder.com",
+      oneLiner: "Multiple roles",
+      description:
+        "Coder | https://coder.com/ | Multiple roles | Multiple locations | Full-time Coder is " +
+        "an AI software development company. [1]Senior Customer Support Engineer • North America " +
+        "• Full time [2]Senior Software Engineer (Multiple Teams, Europe)",
+    }),
+  );
+
+  assert.equal(payload?.title, "Senior Customer Support Engineer");
+});
+
+test("a role-shaped oneLiner is kept unchanged", () => {
+  const payload = toHubJob(
+    match({
+      id: "hn:threatmark",
+      name: "ThreatMark",
+      companyDomain: "threatmark.com",
+      oneLiner: "Security, Machine Learning",
+      locations: ["REMOTE(World) / Brno, Czech Republic", "Remote"],
+      description:
+        "ThreatMark | Security, Machine Learning | REMOTE(World) / Brno, Czech Republic | Equity",
+    }),
+  );
+
+  assert.equal(payload?.title, "Security, Machine Learning");
+});
+
+test("a paragraph oneLiner falls back to the company name", () => {
+  const payload = toHubJob(
+    match({
+      id: "hn:shepherd-series-b",
+      name: "Shepherd (Series B)",
+      companyDomain: "shepherdinsurance.com",
+      oneLiner:
+        "San Francisco, CA At Shepherd, we're pursuing the most ambitious technical vision in " +
+        "commercial insurance: fully autonomous underwriting.",
+      description:
+        "Shepherd (Series B) | ONSITE | San Francisco, CA At Shepherd, we're pursuing the most " +
+        "ambitious technical vision in commercial insurance. We're growing in NYC now too!",
+    }),
+  );
+
+  assert.equal(payload?.title, "Shepherd (Series B)");
+});
+
+test('a "City, Country" oneLiner is replaced from the description', () => {
+  const payload = toHubJob(
+    match({
+      id: "hn:enthought",
+      name: "Enthought",
+      companyDomain: "enthought.jp",
+      oneLiner: "Tokyo, Japan",
+      locations: ["Full-time", "Remote"],
+      description:
+        "Enthought | Tokyo, Japan | Full-time | HYBRID | https://enthought.jp/careers - " +
+        "Senior Infrastructure Engineer | Salary: ¥10M to ¥14M per year",
+    }),
+  );
+
+  assert.equal(payload?.title, "Senior Infrastructure Engineer");
+});
+
+test("a role phrase starting with a stopword is not used", () => {
+  const payload = toHubJob(
+    match({
+      id: "hn:acme-eng",
+      name: "Acme",
+      companyDomain: "acme.com",
+      oneLiner: "Multiple roles",
+      description:
+        "Acme | Multiple roles | The Engineering team owns the platform. " +
+        "Roles include Senior Platform Engineer.",
+    }),
+  );
+
+  assert.equal(payload?.title, "Senior Platform Engineer");
+});
